@@ -14,13 +14,19 @@ router.post('/login', async (req, res) => {
         const teacher = await Teacher.findOne({ teacherCode });
 
         if (!teacher) {
-            return res.status(401).json({ error: 'Sai mã số giáo viên.' });
+            return res.status(401).json({
+                status: "wrong_teacher_code",
+                error: 'Sai mã số giáo viên.'
+            });
         }
 
         const isPasswordValid = await bcrypt.compare(password, teacher.password);
 
         if (!isPasswordValid) {
-            return res.status(401).json({ error: 'Sai mật khẩu.' });
+            return res.status(401).json({
+                status: "wrong_pass",
+                error: 'Sai mật khẩu.'
+            });
         }
 
         const token = jwt.sign({ teacherCode: teacher.teacherCode }, JWT_KEY);
