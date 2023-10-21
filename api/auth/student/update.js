@@ -11,12 +11,18 @@ router.put('/update/student/:studentId', async (req, res) => {
         const student = await Student.findOne({ studentId });
 
         if (!student) {
-            return res.status(404).json({ error: 'Student not found' });
+            return res.status(404).json({
+                status: "no_student",
+                error: 'Student not found'
+            });
         }
 
         const existingGmail = await Student.findOne({ gmail: updatedStudentData.gmail });
         if (existingGmail) {
-            return res.status(400).json({ error: 'Gmail already exists' });
+            return res.status(400).json({
+                status: "check_gmail",
+                error: 'Gmail already exists'
+            });
         }
         const existingGmailData = await Student.findOne({ gmail });
         if (existingGmailData) {
@@ -29,7 +35,10 @@ router.put('/update/student/:studentId', async (req, res) => {
         }
         const existingPhone = await Student.findOne({ phone: updatedStudentData.phone });
         if (existingPhone) {
-            return res.status(400).json({ error: 'Phone already exists' });
+            return res.status(400).json({
+                status: "check_phone",
+                error: 'Phone already exists'
+            });
         }
 
         const existingCccdData = await Student.findOne({ cccd });
@@ -38,7 +47,10 @@ router.put('/update/student/:studentId', async (req, res) => {
         }
         const existingCccd = await Student.findOne({ cccd: updatedStudentData.cccd });
         if (existingCccd) {
-            return res.status(400).json({ error: 'CCCD already exists' });
+            return res.status(400).json({
+                status: "check_cccd",
+                error: 'CCCD already exists'
+            });
         }
 
         student.gmail = updatedStudentData.gmail;
