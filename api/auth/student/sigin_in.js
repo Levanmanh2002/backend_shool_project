@@ -1,8 +1,11 @@
 const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
 const Student = require("../../../models/student");
+
+const JWT_KEY = "secret";
 
 router.post('/signin', async (req, res) => {
     try {
@@ -26,10 +29,13 @@ router.post('/signin', async (req, res) => {
             });
         }
 
+        const token = jwt.sign({ mssv: student.mssv }, JWT_KEY);
+
         res.status(201).json({
             status: "SUCCESS",
             message: "Học sinh",
-            data: student
+            data: student,
+            token: token
         });
     } catch (error) {
         console.error(error);
