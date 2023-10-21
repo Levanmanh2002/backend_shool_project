@@ -11,13 +11,19 @@ router.post('/signin', async (req, res) => {
         const student = await Student.findOne({ mssv });
 
         if (!student) {
-            return res.status(401).json({ error: 'Invalid mssv' });
+            return res.status(401).json({
+                status: "wrong_mssv",
+                error: 'Invalid mssv'
+            });
         }
 
         const isPasswordValid = await bcrypt.compare(password, student.password);
 
         if (!isPasswordValid) {
-            return res.status(401).json({ error: 'Invalid password' });
+            return res.status(401).json({
+                status: "wrong_pass",
+                error: 'Invalid password'
+            });
         }
 
         res.status(201).json({
