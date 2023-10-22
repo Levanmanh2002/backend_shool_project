@@ -41,7 +41,6 @@ router.post('/reset-password', async (req, res) => {
         const expirationTime = currentTime + (30 * 60 * 1000);
         student.verificationCode = verificationCode;
         student.resetTokenExpiration = expirationTime;
-        console.log(verificationCode);
         await student.save();
 
         const remainingTime = new Date(expirationTime - currentTime).toISOString().substr(11, 8);
