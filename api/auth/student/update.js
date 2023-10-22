@@ -53,6 +53,10 @@ router.put('/update/student/:studentId', async (req, res) => {
             });
         }
 
+        if (!updatedStudentData.gender || updatedStudentData.gender.trim() === '') {
+            updatedStudentData.gender = 'Khác';
+        }
+
         student.gmail = updatedStudentData.gmail;
         student.phone = updatedStudentData.phone;
         student.fullName = updatedStudentData.fullName;
