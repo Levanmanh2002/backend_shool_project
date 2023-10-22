@@ -68,6 +68,49 @@ router.post('/upload-avatar', upload.single('file'), async (req, res) => {
     }
 });
 
+router.put('/edit-avatar/:studentId', upload.single('file'), async (req, res) => {
+    try {
+        const studentId = req.params.studentId;
+        const file = req.file;
+
+        if (!file) {
+            return res.status(400).json({ error: 'Không có tệp hình ảnh.' });
+        }
+
+        if (!studentId || studentId.length !== 24) {
+            return res.status(400).json({ error: 'StudentId không hợp lệ.' });
+        }
+
+        const student = await Student.findById(studentId);
+        if (!student) {
+            return res.status(404).json({ error: 'Sinh viên không tồn tại.' });
+        }
+
+        const tempFilePath = `temp_${studentId}_${file.originalname}`;
+        fs.writeFileSync(tempFilePath, file.buffer);
+        const filePath = tempFilePath;
+        const fileName = `${studentId}-${file.originalname}`;
+        const fileDestination = `graduation-certificates/student_avatar/${studentId}/${fileName}`;
+        await bucket.upload(filePath, {
+            destination: fileDestination,
+        });
+        fs.unlinkSync(tempFilePath);
+
+        const [url] = await bucket.file(fileDestination).getSignedUrl({
+            action: 'read',
+            expires: '03-01-2500',
+        });
+
+        student.avatarUrl = url;
+        await student.save();
+
+        res.status(201).json({ message: 'Chỉnh sửa ảnh thành công.', newAvatarUrl: url });
+    } catch (error) {
+        console.error('Lỗi khi chỉnh sửa ảnh:', error);
+        res.status(500).json({ error: 'Lỗi khi chỉnh sửa ảnh.' });
+    }
+});
+
 router.get('/avatar/:studentId', async (req, res) => {
     try {
         const studentId = req.params.studentId;
