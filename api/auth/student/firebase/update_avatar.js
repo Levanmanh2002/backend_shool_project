@@ -20,7 +20,7 @@ const upload = multer({
 })
 
 
-router.post('/upload-image', upload.single('file'), async (req, res) => {
+router.post('/upload-avatar', upload.single('file'), async (req, res) => {
     try {
         const { studentId } = req.body;
         const file = req.file;
@@ -43,7 +43,7 @@ router.post('/upload-image', upload.single('file'), async (req, res) => {
 
         const filePath = tempFilePath
         const fileName = `${studentId}-${file.originalname}`;
-        const fileDestination = `graduation-certificates/student_image_certification/${studentId}/${fileName}`;
+        const fileDestination = `graduation-certificates/student_avatar/${studentId}/${fileName}`;
 
         await bucket.upload(filePath, {
             destination: fileDestination,
@@ -55,10 +55,11 @@ router.post('/upload-image', upload.single('file'), async (req, res) => {
             action: 'read',
             expires: '03-01-2500',
         });
-        studentId.graduationCertificate = url;
+
+        studentId.avatarUrl = url;
 
         res.status(201).json({
-            message: 'Tải ảnh lên Firebase thành công.', imageUrl: url
+            message: 'Tải ảnh lên Firebase thành công.', avatarUrl: url
         });
     } catch (error) {
         console.error('Lỗi khi tải ảnh lên Firebase:', error);
@@ -66,10 +67,10 @@ router.post('/upload-image', upload.single('file'), async (req, res) => {
     }
 });
 
-router.get('/images/:studentId', async (req, res) => {
+router.get('/avatar/:studentId', async (req, res) => {
     try {
         const studentId = req.params.studentId;
-        const folderPath = `graduation-certificates/student_image_certification/${studentId}/`;
+        const folderPath = `graduation-certificates/student_avatar/${studentId}/`;
         const [files] = await bucket.getFiles({ prefix: folderPath });
 
         const imageUrls = [];
@@ -84,7 +85,7 @@ router.get('/images/:studentId', async (req, res) => {
 
         res.status(201).json({
             status: "SUCCESS",
-            message: "Giấy chứng nhận tốt nghiệp của học sinh " + studentId,
+            message: "Ảnh đại diện của học sinh " + studentId,
             data: imageUrls,
         });
     } catch (error) {
@@ -93,11 +94,11 @@ router.get('/images/:studentId', async (req, res) => {
     }
 });
 
-router.delete('/delete-images/:studentId', async (req, res) => {
+router.delete('/delete-avatar/:studentId', async (req, res) => {
     try {
         const { studentId } = req.params;
 
-        const studentFolder = `graduation-certificates/student_image_certification/${studentId}`;
+        const studentFolder = `graduation-certificates/student_avatar/${studentId}`;
 
         const [files] = await bucket.getFiles({ prefix: studentFolder });
 
@@ -105,7 +106,7 @@ router.delete('/delete-images/:studentId', async (req, res) => {
             await file.delete();
         }));
 
-        res.status(200).json({ message: `Đã xóa tất cả hình ảnh trong thư mục của studentId graduationCertificate ${studentId}.` });
+        res.status(201).json({ message: `Đã xóa tất cả hình ảnh trong thư mục của studentId ${studentId}.` });
     } catch (error) {
         console.error('Lỗi khi xóa hình ảnh:', error);
         res.status(500).json({ error: 'Lỗi khi xóa hình ảnh.' });

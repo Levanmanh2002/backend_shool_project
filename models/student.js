@@ -48,6 +48,7 @@ const studentSchema = new Schema({
     notes: String,  // ghi chú
     verificationCode: String,
     resetTokenExpiration: Date,
+    avatarUrl: String,
     isStudying: {
         type: Boolean,   // học sinh đang học 
         default: true,

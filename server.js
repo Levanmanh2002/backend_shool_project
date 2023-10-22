@@ -33,6 +33,7 @@ const classTeachersRouter = require("./api/home/teacher/class/class_teachers")
 const uploadImagesFirebaseStorageRouter = require("./api/auth/student/firebase/firebase_storage_router")
 const updateImageFirebaseStorageRouter = require("./api/auth/teacher/firebase/update_avatar")
 const profileStudentsRouter = require("./api/auth/student/profile")
+const updateAvatarStudentRouter = require("./api/auth/student/firebase/update_avatar")
 
 app.use(bodyParser());
 
@@ -65,6 +66,7 @@ app.use('/admin', classTeachersRouter)
 app.use('/user', uploadImagesFirebaseStorageRouter)
 app.use('/admin', updateImageFirebaseStorageRouter)
 app.use('/user', profileStudentsRouter)
+app.use('/user', updateAvatarStudentRouter)
 
 app.listen(port, () => {
     console.log(`Server running on port ${port}`);
