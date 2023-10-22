@@ -45,7 +45,7 @@ router.post('/reset-password', async (req, res) => {
         await student.save();
 
         const remainingTime = new Date(expirationTime - currentTime).toISOString().substr(11, 8);
-        
+
         const emailHtml = `
             <!DOCTYPE html>
             <html>
@@ -170,7 +170,7 @@ router.post('/recover-account', async (req, res) => {
         student.resetTokenExpiration = null;
         await student.save();
 
-        res.status(200).json({
+        res.status(201).json({
             status: 'SUCCESS',
             message: 'Password reset successful',
             student,
