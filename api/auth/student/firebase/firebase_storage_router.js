@@ -55,7 +55,8 @@ router.post('/upload-image', upload.single('file'), async (req, res) => {
             action: 'read',
             expires: '03-01-2500',
         });
-        studentId.graduationCertificate = url;
+        student.graduationCertificate = url;
+        await student.save();
 
         res.status(201).json({
             message: 'Tải ảnh lên Firebase thành công.', imageUrl: url

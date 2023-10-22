@@ -56,10 +56,11 @@ router.post('/upload-avatar', upload.single('file'), async (req, res) => {
             expires: '03-01-2500',
         });
 
-        studentId.avatarUrl = url;
+        student.avatarUrl = url;
+        await student.save();
 
         res.status(201).json({
-            message: 'Tải ảnh lên Firebase thành công.', avatarUrl: url
+            message: 'Tải ảnh lên Firebase thành công.', avatarStudentUrl: url
         });
     } catch (error) {
         console.error('Lỗi khi tải ảnh lên Firebase:', error);
