@@ -1,8 +1,9 @@
 require("./config/db");
 
 const app = require("express")();
-const port = process.env.PORT || 3000;
+const cors = require("cors");
 const bodyParser = require("express").json;
+const port = process.env.PORT || 3000;
 
 const signInRouter = require("./api/auth/student/sigin_in")
 const signUpRouter = require("./api/auth/student/sigin_up")
@@ -35,6 +36,7 @@ const updateImageFirebaseStorageRouter = require("./api/auth/teacher/firebase/up
 const profileStudentsRouter = require("./api/auth/student/profile")
 const updateAvatarStudentRouter = require("./api/auth/student/firebase/update_avatar")
 
+app.use(cors({ credentials: true, origin: '*' }));
 app.use(bodyParser());
 
 app.use('/user', signInRouter)

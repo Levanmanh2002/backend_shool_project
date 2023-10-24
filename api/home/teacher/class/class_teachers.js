@@ -50,7 +50,7 @@ router.get('/teachers', async (req, res) => {
             return {
                 className: classItem.className,
                 studentCount: studentCount,
-                teacher: classItem.teacher.toObject(),
+                teacher: classItem.teacher,
             };
         }));
 
