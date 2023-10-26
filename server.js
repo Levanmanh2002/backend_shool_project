@@ -3,6 +3,7 @@ require("./config/db");
 const app = require("express")();
 const cors = require("cors");
 const bodyParser = require("express").json;
+const cookieParser = require('cookie-parser');
 const port = process.env.PORT || 3000;
 
 const signInRouter = require("./api/auth/student/sigin_in")
@@ -35,19 +36,10 @@ const uploadImagesFirebaseStorageRouter = require("./api/auth/student/firebase/f
 const updateImageFirebaseStorageRouter = require("./api/auth/teacher/firebase/update_avatar")
 const profileStudentsRouter = require("./api/auth/student/profile")
 const updateAvatarStudentRouter = require("./api/auth/student/firebase/update_avatar")
+const scheduleTeacherRouter = require("./api/home/schedule/schedule")
 
-var whitelist = ['https://backend-shool-project.onrender.com', 'http://localhost:3000']
-var corsOptionsDelegate = function (req, callback) {
-    var corsOptions;
-    if (whitelist.indexOf(req.header('Origin')) !== -1) {
-        corsOptions = { origin: true }
-    } else {
-        corsOptions = { origin: false }
-    }
-    callback(null, corsOptions)
-}
-
-app.use(cors({ credentials: true, origin: '*' }));
+app.use(cors({ credentials: true, origin: ['http://localhost:3000'] }))
+app.use(cookieParser())
 
 app.use(bodyParser());
 
@@ -81,7 +73,8 @@ app.use('/user', uploadImagesFirebaseStorageRouter)
 app.use('/admin', updateImageFirebaseStorageRouter)
 app.use('/user', profileStudentsRouter)
 app.use('/user', updateAvatarStudentRouter)
+app.use('/admin', scheduleTeacherRouter)
 
-app.listen(port, cors(corsOptionsDelegate), () => {
+app.listen(port, () => {
     console.log(`Server running on port ${port}`);
 });
