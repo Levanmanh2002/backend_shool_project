@@ -75,6 +75,34 @@ router.get('/get-detail/:id', async (req, res) => {
         console.log(error);
         res.status(500).json({ error: "Lỗi máy chủ nội bộ" });
     }
+});
+
+router.get('/get-duration', async (req, res) => {
+    try {
+        const classId = req.body.class_id; // mã lớp học
+        // thời gian bắt đầu trong tuần
+        // ví dụ: bắt đầu là ngày 23/10/2023 thì truyển vào theo time là 23/10/2023 00:00:00
+        const startTime = req.body.startTime;
+        // thời gian kết thúc trong tuần
+        // ví dụ: kết thúc là ngày 23/10/2023 thì truyển vào theo time là 23/10/2023 23:59:59
+        const endTime = req.body.endTime;
+        const result = await TimeTable.find({
+            classId: classId,
+            $and: [
+                { startTime: { $gte: startTime } },
+                { endTime: { $lte: endTime } }
+            ]
+        });
+
+        res.status(201).json({
+            status: "SUCCESS",
+            message: "Danh sách thời khóa biểu",
+            data: result
+        });
+    } catch (e) {
+        console.log(error);
+        res.status(500).json({ error: "Lỗi máy chủ nội bộ" });
+    }
 })
 
 router.get('/get-duration', async (req, res) => {
