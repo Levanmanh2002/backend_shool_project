@@ -6,9 +6,9 @@ router.get('/classes', async (req, res) => {
     try {
         const classes = await Class.find();
 
-        res.status(200).json({
+        res.status(201).json({
             totalClasses: classes.length,
-            classes: classes.map(cls => cls.className),
+            classes: classes.map(cls => ({ className: cls.className, id: cls.id })),
         });
     } catch (error) {
         console.error('Error:', error);

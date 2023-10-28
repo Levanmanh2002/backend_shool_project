@@ -39,18 +39,6 @@ const updateAvatarStudentRouter = require("./api/auth/student/firebase/update_av
 const timetableRouter = require('./api/auth/other/timetable');
 const getTimeTableRoute = require('./api/auth/other/get_timetable');
 const deleteTimeTableRoute = require('./api/auth/other/delete_timetable');
-const scheduleTeacherRouter = require("./api/home/schedule/schedule")
-
-var whitelist = ['https://backend-shool-project.onrender.com', 'http://localhost:3000', '*']
-var corsOptionsDelegate = function (req, callback) {
-    var corsOptions;
-    if (whitelist.indexOf(req.header('Origin')) !== -1) {
-        corsOptions = { origin: true }
-    } else {
-        corsOptions = { origin: false }
-    }
-    callback(null, corsOptions)
-}
 
 app.use(cors({ credentials: true, origin: '*' }));
 app.use(cors({ credentials: true, origin: ['http://localhost:3000'] }))
@@ -63,11 +51,11 @@ app.use('/admin', signUpRouter)
 app.use('/admin', deleteTeacher)
 app.use('/user', updateStudenRouter)
 app.use('/admin', teacherRouter)
-app.use('/admin',  loginRouter)
+app.use('/admin', loginRouter)
 app.use('/admin', profileRouter)
 app.use('/admin', updateTeacherRouter)
-app.use('/admin', cors(corsOptionsDelegate), workingRouter)
-app.use('/admin', cors(corsOptionsDelegate), retiredRouter)
+app.use('/admin', workingRouter)
+app.use('/admin', retiredRouter)
 app.use('/user', checkStudentRouter)
 app.use('/user', expelStudentRouter)
 app.use('/user', suspendStudentRouter)
@@ -91,7 +79,6 @@ app.use('/user', updateAvatarStudentRouter)
 app.use('/timetable', timetableRouter);
 app.use('/timetable', getTimeTableRoute);
 app.use('/timetable', deleteTimeTableRoute);
-app.use('/admin', scheduleTeacherRouter)
 
 app.listen(port, () => {
     console.log(`Server running on port ${port}`);

@@ -6,7 +6,7 @@ const Major = require('../../../models/major');
 const Class = require('../../../models/class');
 const dateAndTime = require('date-and-time');
 
-router.post('/create', async (req, res) => {
+router.post('/create', async (req, res) => { // tạo một lịch học 
     try {
         const teacherId = req.body.teacher_id; // Mã giáo viên
         const classId = req.body.class_id; // Mã lớp
@@ -20,7 +20,6 @@ router.post('/create', async (req, res) => {
         const result = await TimeTable.findOne(getQuerySameTimetable(classId, majorId, startTime, endTime));
 
         if (result != null) {
-            console.log('da co')
             return res.status(205).json({
                 status: "FAIL",
                 message: "Thời khóa biểu đã được tạo",
@@ -70,13 +69,14 @@ router.post('/create', async (req, res) => {
         timeTable.duration = duration;
         timeTable.status = 'create';
         await timeTable.save();
+
         res.status(201).json({
             status: "SUCCESS",
             message: "Tạo thời khóa biểu thành công",
             data: timeTable
         })
     } catch (e) {
-        // console.log(e);
+        console.log(e);
         res.status(500).json({
             status: "FAIL",
             message: "Lỗi máy chủ",
@@ -84,14 +84,14 @@ router.post('/create', async (req, res) => {
     }
 });
 
-router.post('/create-semester', async (req, res) => {
+router.post('/create-semester', async (req, res) => { // tạo thời khóa biểu theo kiểu nhiều tuần
     try {
         const teacherId = req.body.teacher_id; // Mã giáo viên
         const classId = req.body.class_id; // Mã lớp
         const majorId = req.body.major_id; // Mã môn học
         const startTime = new Date(req.body.start_time); // ngày môn học đó trên thời khóa biểu (theo kiển int)
         const duration = req.body.duration // khoảng thời gian tính theo giây
-        const numberWeek = req.body.number_weeks;
+        const numberWeek = req.body.number_weeks; // Số tuần mà bạn muốn tạo thời khóa biểu với nội dung như nhau
 
         const endTime = dateAndTime.addSeconds(startTime, duration);
 
@@ -138,7 +138,7 @@ router.post('/create-semester', async (req, res) => {
         }
         const timeTables = [];
 
-        for(var i = 0; i < numberWeek; i++) {
+        for (var i = 0; i < numberWeek; i++) {
             const newStartTime = dateAndTime.addDays(startTime, i * 7)
             const newEndTime = dateAndTime.addSeconds(newStartTime, duration);
 
@@ -180,6 +180,7 @@ router.put('/update/:id', async (req, res) => {
         const startTime = new Date(req.body.day); // ngày môn học đó trên thời khóa biểu (theo kiển int)
         const duration = req.body.duration // khoảng thời gian tính theo giây
         const status = req.body.status;
+
         const endTime = dateAndTime.addSeconds(startTime, duration);
 
         if (result == null) {
@@ -264,7 +265,7 @@ router.put('/update/:id', async (req, res) => {
             data: result
         });
     } catch (e) {
-        console.log(error);
+        console.log(e);
         res.status(500).json({ error: "Lỗi máy chủ nội bộ" });
     }
 });
@@ -296,7 +297,5 @@ function getQuerySameTimetable(classId, majorId, start_time, end_time) {
         ]
     };
 }
-
-
 
 module.exports = router;
