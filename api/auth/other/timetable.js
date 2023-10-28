@@ -91,7 +91,7 @@ router.post('/create-semester', async (req, res) => {
         const majorId = req.body.major_id; // Mã môn học
         const startTime = new Date(req.body.start_time); // ngày môn học đó trên thời khóa biểu (theo kiển int)
         const duration = req.body.duration // khoảng thời gian tính theo giây
-        const numberWeek = req.body.number_weeks;
+        const numberWeek = req.body.number_weeks; // Số tuần mà bạn muốn tạo thời khóa biểu với nội dung như nhau
 
         const endTime = dateAndTime.addSeconds(startTime, duration);
 
