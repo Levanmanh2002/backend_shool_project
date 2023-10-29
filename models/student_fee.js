@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-const Fee = require('./fee');
 const Schema = mongoose.Schema;
 
 const studentFeeSchema = new Schema({
@@ -13,7 +12,15 @@ const studentFeeSchema = new Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Student'
     },
-    fees: [Fee],
+    fees: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Fee'
+    }],
+    semester_id: String,
+    semester: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Semester'
+    },
     createdAt: {
         type: Date,
         default: Date.now,

@@ -39,6 +39,9 @@ const updateAvatarStudentRouter = require("./api/auth/student/firebase/update_av
 const timetableRouter = require('./api/auth/other/timetable');
 const getTimeTableRoute = require('./api/auth/other/get_timetable');
 const deleteTimeTableRoute = require('./api/auth/other/delete_timetable');
+const studentFeeRoute = require('./api/auth/fee/student_fee_router');
+const feeRouter = require('./api/auth/fee/fee_router');
+const paymentRouter = require('./api/auth/fee/payment_fee');
 
 app.use(cors({ credentials: true, origin: '*' }));
 app.use(cors({ credentials: true, origin: ['http://localhost:3000'] }))
@@ -79,6 +82,9 @@ app.use('/user', updateAvatarStudentRouter)
 app.use('/timetable', timetableRouter);
 app.use('/timetable', getTimeTableRoute);
 app.use('/timetable', deleteTimeTableRoute);
+app.use('/fee', feeRouter); // danh sách các phí mặc định
+app.use('/student-fee', studentFeeRoute); // danh sách phí học sinh hay lớp cần đóng cho một học kì
+app.use('/student-payment', paymentRouter); // api về các thanh toán của học sinh với trường
 
 app.listen(port, () => {
     console.log(`Server running on port ${port}`);

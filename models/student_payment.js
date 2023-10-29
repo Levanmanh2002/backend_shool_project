@@ -1,9 +1,8 @@
 const mongoose = require('mongoose');
-const Fee = require('./fee');
 const Schema = mongoose.Schema;
 
 const studentPaySchema = new Schema({
-    studentId: String,
+    student_id: String,
     student: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Student' 
@@ -14,6 +13,7 @@ const studentPaySchema = new Schema({
         ref: 'StudentFee' 
     },
     money_paid: Number,
+    pay_type: String, // Kiểu thanh toán (CK, TM)
     pay_date: {
         type: Date,
         default: Date.now,
@@ -28,6 +28,6 @@ const studentPaySchema = new Schema({
     },
 });
 
-const StudentFee = mongoose.model('StudentFee', studentFeeSchema);
+const StudentFee = mongoose.model('StudentFee', studentPaySchema);
 
 module.exports = StudentFee;

@@ -2,6 +2,8 @@ const express = require('express');
 const Fee = require('../../../models/fee');
 const router = express.Router();
 
+// phí mặc định
+// tự thêm vào
 router.get('/get', async (req, res) => {
     try {
         const result = await Fee.find();
@@ -71,7 +73,6 @@ router.put('/update/:id', async (req, res) => {
             return res.status(205).json({
                 status: "FAIL",
                 message: "Không tồn tại phí",
-                data: fee
             });
         }
         fee.name = name;
@@ -100,7 +101,6 @@ router.delete('/delete/:id', async (req, res) => {
             return res.status(205).json({
                 status: "FAIL",
                 message: "Không tồn tại phí",
-                data: fee
             });
         }
         
