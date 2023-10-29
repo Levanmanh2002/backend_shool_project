@@ -20,7 +20,7 @@ router.post('/create', async (req, res) => { // tạo một lịch học
         const result = await TimeTable.findOne(getQuerySameTimetable(classId, majorId, startTime, endTime));
 
         if (result != null) {
-            return res.status(205).json({
+            return res.status(400).json({
                 status: "FAIL",
                 message: "Thời khóa biểu đã được tạo",
             });
@@ -37,22 +37,22 @@ router.post('/create', async (req, res) => { // tạo một lịch học
         const major = data[2];
 
         if (teacher == null) {
-            return res.status(205).json({
-                status: "FAIL",
+            return res.status(400).json({
+                status: "TEACHERFAIL",
                 message: "Giáo viên không tồn tại",
             });
         }
 
         if (studentClass == null) {
-            return res.status(205).json({
-                status: "FAIL",
+            return res.status(400).json({
+                status: "CLASSFAIL",
                 message: "Lớp học không tồn tại",
             });
         }
 
         if (major == null) {
-            return res.status(205).json({
-                status: "FAIL",
+            return res.status(400).json({
+                status: "MAJORFAIL",
                 message: "Môn học không tồn tại",
             });
         }
