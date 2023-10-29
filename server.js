@@ -42,6 +42,7 @@ const deleteTimeTableRoute = require('./api/auth/other/delete_timetable');
 const studentFeeRoute = require('./api/auth/fee/student_fee_router');
 const feeRouter = require('./api/auth/fee/fee_router');
 const paymentRouter = require('./api/auth/fee/payment_fee');
+const semestersRouter = require('./api/home/schedule/schedule')
 
 app.use(cors({ credentials: true, origin: '*' }));
 app.use(cors({ credentials: true, origin: ['http://localhost:3000'] }))
@@ -85,6 +86,7 @@ app.use('/timetable', deleteTimeTableRoute);
 app.use('/fee', feeRouter); // danh sách các phí mặc định
 app.use('/student-fee', studentFeeRoute); // danh sách phí học sinh hay lớp cần đóng cho một học kì
 app.use('/student-payment', paymentRouter); // api về các thanh toán của học sinh với trường
+app.use('/admin', semestersRouter);
 
 app.listen(port, () => {
     console.log(`Server running on port ${port}`);

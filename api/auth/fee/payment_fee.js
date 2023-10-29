@@ -1,11 +1,12 @@
 const express = require('express');
-const StudentFee = require('../../../models/student_fee');
-const Student = require('../../../models/student');
-const StudentPayment = require('../../../models/student_payment');
 const router = express.Router();
 
-router.get('/payment/student/:id', async (req,res) => {
-    try{
+const StudentFees = require("../../../models/student_fee");
+const Student = require("../../../models/student");
+const StudentPayment = require("../../../models/student_payment");
+
+router.get('/payment/student/:id', async (req, res) => {
+    try {
         const id = req.params.id;
         const payment = await StudentPayment.find({ student_id: id });
 
@@ -14,14 +15,14 @@ router.get('/payment/student/:id', async (req,res) => {
             message: "Lấy danh sách thành công",
             data: payment
         });
-    } catch(e) {
+    } catch (e) {
         console.log(e);
         res.status(500).json({ error: 'Lỗi máy chủ nội bộ' });
     }
 })
 
-router.get('/payment/:id', async (req,res) => {
-    try{
+router.get('/payment/:id', async (req, res) => {
+    try {
         const id = req.params.id;
         const payment = await StudentPayment.findById(id);
 
@@ -30,14 +31,14 @@ router.get('/payment/:id', async (req,res) => {
             message: "Lấy thanh toán thành công",
             data: payment
         });
-    } catch(e) {
+    } catch (e) {
         console.log(e);
         res.status(500).json({ error: 'Lỗi máy chủ nội bộ' });
     }
 })
 
-router.post('/add-new-payment', async (req,res) => {
-    try{ 
+router.post('/add-new-payment', async (req, res) => {
+    try {
         const student_id = req.body.student_id;
         const fee_id = req.body.fee_id;
         const paid = req.body.money_paid;
@@ -45,7 +46,7 @@ router.post('/add-new-payment', async (req,res) => {
         const payDate = req.body.pay_date ?? new Date().getTime();
 
         const student = await Student.findById(student_id);
-        const fee = await StudentFee.findById(fee_id);
+        const fee = await StudentFees.findById(fee_id);
 
         const payment = new StudentPayment();
         payment.student_id = student_id;
@@ -60,29 +61,29 @@ router.post('/add-new-payment', async (req,res) => {
         res.status(201).json({
             status: "SUCCESS",
             message: "Tạo thanh toán thành công",
-            data: result
+            data: payment
         });
-    } catch(e) {
+    } catch (e) {
         console.error(e);
-        res.status(500).json({ error: 'Lỗi máy chủ nội bộ' }); 
+        res.status(500).json({ error: 'Lỗi máy chủ nội bộ' });
     }
 });
 
-router.post('/update-payment/:id', async (req,res) => {
-    try{ 
+router.post('/update-payment/:id', async (req, res) => {
+    try {
         const paid = req.body.money_paid;
         const pay_type = req.body.pay_type;
         const payDate = req.body.pay_date ?? new Date().getTime();
 
         const payment = await StudentPayment.findById(req.params.id);
 
-        if(payment == null) {
+        if (payment == null) {
             return res.status(205).send({
                 status: "FAIL",
                 message: "Không tồn tại thanh toán này",
-            }); 
+            });
         }
-        
+
         payment.money_paid = paid;
         payment.pay_type = pay_type;
         payment.pay_date = new Date(payDate);
@@ -93,22 +94,22 @@ router.post('/update-payment/:id', async (req,res) => {
             message: "Tạo thanh toán thành công",
             data: result
         });
-    } catch(e) {
+    } catch (e) {
         console.error(e);
-        res.status(500).json({ error: 'Lỗi máy chủ nội bộ' }); 
+        res.status(500).json({ error: 'Lỗi máy chủ nội bộ' });
     }
 });
 
-router.delete('/delete/:id', async (req,res) => {
-    try{ 
+router.delete('/delete/:id', async (req, res) => {
+    try {
 
         const payment = await StudentPayment.findByIdAndDelete(req.params.id);
 
-        if(payment == null) {
+        if (payment == null) {
             return res.status(205).send({
                 status: "FAIL",
                 message: "Không tồn tại thanh toán này",
-            }); 
+            });
         }
 
         res.status(201).json({
@@ -116,9 +117,9 @@ router.delete('/delete/:id', async (req,res) => {
             message: "Xoá thanh toán thành công",
             data: result
         });
-    } catch(e) {
+    } catch (e) {
         console.error(e);
-        res.status(500).json({ error: 'Lỗi máy chủ nội bộ' }); 
+        res.status(500).json({ error: 'Lỗi máy chủ nội bộ' });
     }
 });
 

@@ -1,6 +1,7 @@
 const express = require('express');
-const Fee = require('../../../models/fee');
 const router = express.Router();
+
+const Fee = require("../../../models/fee");
 
 // phí mặc định
 // tự thêm vào
@@ -21,7 +22,7 @@ router.get('/get', async (req, res) => {
 router.get('/get-type', async (req, res) => {
     try {
         const type = req.body.type;
-        const result = await Fee.find({type: type});
+        const result = await Fee.find({ type: type });
         res.status(201).json({
             status: "SUCCESS",
             message: "Danh sách phí",
@@ -55,7 +56,7 @@ router.post('/create', async (req, res) => {
             data: fee
         });
     } catch (err) {
-        console.error('Lỗi khi xóa tài khoản giáo viên:', err);
+        console.error(err);
         res.status(500).json({ error: 'Lỗi máy chủ nội bộ' });
     }
 });
@@ -69,7 +70,7 @@ router.put('/update/:id', async (req, res) => {
         const type = req.body.type;
 
         const fee = Fee.findById(req.params.id);
-        if(fee == null) {
+        if (fee == null) {
             return res.status(205).json({
                 status: "FAIL",
                 message: "Không tồn tại phí",
@@ -97,13 +98,13 @@ router.delete('/delete/:id', async (req, res) => {
     try {
         const fee = await Fee.findByIdAndDelete(req.params.id);
 
-        if(fee == null) {
+        if (fee == null) {
             return res.status(205).json({
                 status: "FAIL",
                 message: "Không tồn tại phí",
             });
         }
-        
+
         res.status(201).json({
             status: "SUCCESS",
             message: "Xóa thành công",

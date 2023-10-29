@@ -5,12 +5,12 @@ const studentPaySchema = new Schema({
     student_id: String,
     student: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Student' 
+        ref: 'Student'
     },
     student_fee_id: String,
     student_fee: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'StudentFee' 
+        ref: 'StudentFee'
     },
     money_paid: Number,
     pay_type: String, // Kiểu thanh toán (CK, TM)
@@ -28,6 +28,6 @@ const studentPaySchema = new Schema({
     },
 });
 
-const StudentFee = mongoose.model('StudentFee', studentPaySchema);
+const StudentPayment = mongoose.model('StudentPayment', studentPaySchema);
 
-module.exports = StudentFee;
+module.exports = StudentPayment;

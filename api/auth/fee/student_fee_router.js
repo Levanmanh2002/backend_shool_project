@@ -1,9 +1,10 @@
 const express = require('express');
-const StudentFee = require('../../../models/student_fee');
-const Class = require('../../../models/class');
-const Student = require('../../../models/student');
-const Semester = require('../../../models/semester');
 const router = express.Router();
+
+const StudentFee = require("../../../models/student_fee");
+const Class = require("../../../models/class");
+const Student = require("../../../models/student");
+const Semester = require("../../../models/semester");
 
 router.get('/get/:id', async (req, res) => {
     try {
@@ -28,20 +29,26 @@ router.get('/get-by-student', async (req, res) => {
         const class_id = req.query.class_id;
         const semester_id = req.query.semester_id;
 
-        if(student_id == null && class_id == null ) {
-            return res.status(205).send({
+        if (student_id === undefined && class_id === undefined) {
+            return res.status(400).json({
                 status: "FAIL",
                 message: "Dữ liệu đầu vào không hợp lệ",
-            }); 
+            });
         }
-        const result = await StudentFee.find({
+
+        const query = {
             semester_id: semester_id,
-            $or: [
-                { studentId: id},
-                { classId: class_id }
-            ],
-           
-        });
+        };
+
+        if (student_id) {
+            query.studentId = student_id;
+        }
+
+        if (class_id) {
+            query.classId = class_id;
+        }
+
+        const result = await StudentFee.find(query);
 
         res.status(201).json({
             status: "SUCCESS",
@@ -49,13 +56,14 @@ router.get('/get-by-student', async (req, res) => {
             data: result
         });
     } catch (err) {
-        console.error('Lỗi khi xóa tài khoản giáo viên:', err);
+        console.error('Lỗi khi lấy danh sách phí:', err);
         res.status(500).json({ error: 'Lỗi máy chủ nội bộ' });
     }
 });
 
+
 router.post('/create-class-fee', async (req, res) => {
-    try{
+    try {
         const fee = req.body.fee; // danh sách các phí
         const classId = req.body.class_id;
         const semester_id = req.body.semester_id;
@@ -63,11 +71,11 @@ router.post('/create-class-fee', async (req, res) => {
         const studentClass = await Class.findById(classId);
         const semester = await Semester.findById(semester_id);
 
-        if(studentClass == null) {
+        if (studentClass == null) {
             return res.status(205).send({
                 status: "FAIL",
                 message: "Không tồn tại lớp",
-            }); 
+            });
         }
 
         const studentFee = new StudentFee()
@@ -81,16 +89,16 @@ router.post('/create-class-fee', async (req, res) => {
         res.status(201).send({
             status: "SUCCESS",
             message: "Tạo học phí cho lớp thành công",
-        }); 
+        });
 
-    } catch(e) {
+    } catch (e) {
         console.log(e);
         res.status(500).send({ error: 'Lỗi máy chủ nội bộ' });
     }
 })
 
 router.post('/create-student-fee', async (req, res) => {
-    try{
+    try {
         const fee = req.body.fee; // danh sách các phí
         const studentId = req.body.student_id;
         const semester_id = req.body.semester_id;
@@ -98,11 +106,11 @@ router.post('/create-student-fee', async (req, res) => {
         const student = await Student.findById(studentId);
         const semester = await Semester.findById(semester_id);
 
-        if(student == null) {
+        if (student == null) {
             return res.status(205).send({
                 status: "FAIL",
                 message: "Không tồn tại hoc sinh",
-            }); 
+            });
         }
 
         const studentFee = new StudentFee();
@@ -116,55 +124,55 @@ router.post('/create-student-fee', async (req, res) => {
         res.status(201).send({
             status: "SUCCESS",
             message: "Tạo học phí cho lớp thành công",
-        }); 
+        });
 
-    } catch(e) {
+    } catch (e) {
         console.log(e);
         res.status(500).send({ error: 'Lỗi máy chủ nội bộ' });
     }
 })
 
 router.put('/update/:id', async (req, res) => {
-    try{
+    try {
         const studentId = req.body.student_id;
         const classId = req.body.class_id;
         const fees = req.body.fees; // danh sách các phí
         const semester_id = req.body.semester_id;
         const studentFee = await StudentFee.findById(req.params.id);
 
-        if(studentFee == null) {
+        if (studentFee == null) {
             return res.status(205).send({
                 status: "FAIL",
                 message: "Không tồn tại phí theo id",
             });
         }
 
-        if(studentId != null) {
+        if (studentId != null) {
             const student = await Student.findById(studentId);
 
-            if(student == null) {
+            if (student == null) {
                 return res.status(205).send({
                     status: "FAIL",
                     message: "Không tồn tại hoc sinh",
-                }); 
+                });
             }
             studentFee.student = student;
             studentFee.studentId = studentId;
-        } else if(classId != null) {
+        } else if (classId != null) {
             const studentClass = await Class.findById(classId);
 
-            if(studentClass == null) {
+            if (studentClass == null) {
                 return res.status(205).send({
                     status: "FAIL",
                     message: "Không tồn tại lớp",
-                }); 
+                });
             }
 
             studentFee.class = studentClass;
             studentFee.classId = classId;
         }
 
-        if(semester_id != null) {
+        if (semester_id != null) {
             const semester = await Semester.findById(semester_id);
             studentFee.semester_id = semester_id;
             studentFee.semester = semester;
@@ -177,19 +185,19 @@ router.put('/update/:id', async (req, res) => {
             status: "SUCCESS",
             message: "Cập nhật học phí cho lớp thành công",
             data: studentFee
-        }); 
+        });
 
-    } catch(e) {
+    } catch (e) {
         console.log(e);
         res.status(500).send({ error: 'Lỗi máy chủ nội bộ' });
     }
 });
 
 router.delete('/delete/:id', async (req, res) => {
-    try{
+    try {
         const result = await StudentFee.findByIdAndDelete(req.params.id);
 
-        if(result == null) {
+        if (result == null) {
             return res.status(205).send({
                 status: "FAIL",
                 message: "Không tồn tại phí theo id",
@@ -199,8 +207,8 @@ router.delete('/delete/:id', async (req, res) => {
         res.status(201).send({
             status: "SUCCESS",
             message: "Xóa học phí cho lớp thành công",
-        }); 
-    } catch(e) {
+        });
+    } catch (e) {
         console.log(e);
         res.status(500).send({ error: 'Lỗi máy chủ nội bộ' });
     }
@@ -253,7 +261,7 @@ router.delete('/delete/:id', async (req, res) => {
 //                 fee.slice(currentIndex, 1);
 //             }
 //         }
-        
+
 //         studentFee.fees = fee;
 //         await studentFee.save();
 
