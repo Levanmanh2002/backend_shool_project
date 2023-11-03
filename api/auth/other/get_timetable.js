@@ -1,10 +1,15 @@
 const express = require('express');
 const router = express.Router();
 const TimeTable = require('../../../models/timetable');
+const Teacher = require('../../../models/teacher');
+const Class = require('../../../models/class');
+const Major = require('../../../models/major');
 
 router.get('/get-all', async (req, res) => {
     try {
-        const result = await TimeTable.find();
+        var result = await TimeTable.find();
+        
+        result = await fetchDataTimeTable(result);
 
         res.status(201).json({
             status: "SUCCESS",
@@ -12,14 +17,16 @@ router.get('/get-all', async (req, res) => {
             data: result
         });
     } catch (e) {
-        console.log(error);
+        console.log(e);
         res.status(500).json({ error: "Lỗi máy chủ nội bộ" });
     }
 });
 
 router.get('/get-by-teacher', async (req, res) => {
     try {
-        const result = await TimeTable.find({ teacherId: req.body.teacher_id });
+        var result = await TimeTable.find({ teacherId: req.body.teacher_id });
+
+        result = await fetchDataTimeTable(result);
 
         res.status(201).json({
             status: "SUCCESS",
@@ -34,7 +41,9 @@ router.get('/get-by-teacher', async (req, res) => {
 
 router.get('/get-by-class', async (req, res) => {
     try {
-        const result = await TimeTable.find({ classId: req.body.class_id });
+        var result = await TimeTable.find({ classId: req.body.class_id });
+
+        result = await fetchDataTimeTable(result);
 
         res.status(201).json({
             status: "SUCCESS",
@@ -49,7 +58,9 @@ router.get('/get-by-class', async (req, res) => {
 
 router.get('/get-by-major', async (req, res) => {
     try {
-        const result = await TimeTable.find({ majorId: req.body.major_id });
+        var result = await TimeTable.find({ majorId: req.body.major_id });
+
+        result = await fetchDataTimeTable(result);
 
         res.status(201).json({
             status: "SUCCESS",
@@ -65,6 +76,14 @@ router.get('/get-by-major', async (req, res) => {
 router.get('/get-detail/:id', async (req, res) => {
     try {
         const result = await TimeTable.findById(req.params.id);
+        const fetchData = await Promise.all([
+            Class.findById(val.classId),
+            Teacher.findById(val.teacherId),
+            Major.findById(val.majorId),
+        ]);
+        result.class = fetchData[0];
+        result.teacher = fetchData[1];
+        result.major = fetchData[2];
 
         res.status(201).json({
             status: "SUCCESS",
@@ -79,7 +98,7 @@ router.get('/get-detail/:id', async (req, res) => {
 
 router.get('/get-duration', async (req, res) => {
     try {
-        if (type(req.body.startTime) == "String" || type(req.body.endTime) == "String") {
+        if (type(req.query.startTime) == "String" || type(req.query.endTime) == "String") {
             return res.status(205).json({
                 status: "FAIL",
                 message: "Biến đầu vào không hợp lệ",
@@ -93,13 +112,15 @@ router.get('/get-duration', async (req, res) => {
         // thời gian kết thúc trong tuần
         // ví dụ: kết thúc là ngày 23/10/2023 thì truyển vào theo time là 23/10/2023 23:59:59
         const endTime = new Date(req.body.endTime);
-        const result = await TimeTable.find({
+        var result = await TimeTable.find({
             classId: classId,
             $and: [
                 { startTime: { $gte: startTime } },
                 { endTime: { $lte: endTime } }
             ]
         });
+
+        result = await fetchDataTimeTable(result);
 
         res.status(201).json({
             status: "SUCCESS",
@@ -110,6 +131,21 @@ router.get('/get-duration', async (req, res) => {
         console.log(error);
         res.status(500).json({ error: "Lỗi máy chủ nội bộ" });
     }
-})
+});
+
+async function fetchDataTimeTable(timetables) {
+    return Promise.all(timetables.map(async (val, index, arr) => {
+        const fetchData = await Promise.all([
+            Class.findById(val.classId),
+            Teacher.findById(val.teacherId),
+            Major.findById(val.majorId),
+        ]);
+        val.class = fetchData[0];
+        val.teacher = fetchData[1];
+        val.major = fetchData[2];
+        return val;
+    }));
+} 
+
 
 module.exports = router;
