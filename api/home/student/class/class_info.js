@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const Class = require('../../../../models/class');
 const Student = require('../../../../models/student');
+const Teacher = require('../../../../models/teacher');
 
 router.get('/class-info', async (req, res) => {
     try {
@@ -11,10 +12,12 @@ router.get('/class-info', async (req, res) => {
 
         for (const cls of classes) {
             const students = await Student.find({ _id: { $in: cls.students } });
+            const teacher = await Teacher.find({ _id: { $in: cls.teacher } });
             const numberOfStudents = students.length;
             classInfo.push({
                 className: cls.className,
                 numberOfStudents: numberOfStudents,
+                teacher: teacher,
                 students: students,
             });
         }
