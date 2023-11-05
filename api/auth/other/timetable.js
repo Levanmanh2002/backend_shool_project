@@ -95,17 +95,6 @@ router.post('/create-semester', async (req, res) => { // tạo thời khóa bi�
 
         const endTime = dateAndTime.addSeconds(startTime, duration);
 
-        // Tìm các lịch học cùng môn mà thời gian của lớp đó và môn đó lại trùng nhau
-        const result = await TimeTable.findOne(getQuerySameTimetable(classId, majorId, startTime, endTime));
-
-        if (result != null) {
-            console.log('da co')
-            return res.status(205).json({
-                status: "FAIL",
-                message: "Thời khóa biểu đã được tạo",
-            });
-        }
-
         const data = await Promise.all([
             Teacher.findById(teacherId),
             Class.findById(classId),
@@ -117,22 +106,22 @@ router.post('/create-semester', async (req, res) => { // tạo thời khóa bi�
         const major = data[2];
 
         if (teacher == null) {
-            return res.status(205).json({
-                status: "FAIL",
+            return res.status(400).json({
+                status: "TEACHERFAIL",
                 message: "Giáo viên không tồn tại",
             });
         }
 
         if (studentClass == null) {
-            return res.status(205).json({
-                status: "FAIL",
+            return res.status(400).json({
+                status: "CLASSFAIL",
                 message: "Lớp học không tồn tại",
             });
         }
 
         if (major == null) {
-            return res.status(205).json({
-                status: "FAIL",
+            return res.status(400).json({
+                status: "MAJORFAIL",
                 message: "Môn học không tồn tại",
             });
         }
@@ -142,19 +131,29 @@ router.post('/create-semester', async (req, res) => { // tạo thời khóa bi�
             const newStartTime = dateAndTime.addDays(startTime, i * 7)
             const newEndTime = dateAndTime.addSeconds(newStartTime, duration);
 
-            const timeTable = new TimeTable();
-            timeTable.startTime = newStartTime;
-            timeTable.endTime = newEndTime;
-            timeTable.classId = classId;
-            timeTable.class = studentClass;
-            timeTable.teacherId = teacherId;
-            timeTable.teacher = teacher;
-            timeTable.majorId = majorId;
-            timeTable.major = major;
-            timeTable.duration = duration;
-            timeTable.status = 'create';
-            await timeTable.save();
-            timeTables.push(timeTable);
+            // Tìm các lịch học cùng môn mà thời gian của lớp đó và môn đó lại trùng nhau
+            const result = await TimeTable.findOne(getQuerySameTimetable(classId, majorId, newStartTime, newEndTime));
+
+            if (result == null) {
+                // console.log('da co')
+                // return res.status(205).json({
+                //     status: "FAIL",
+                //     message: "Thời khóa biểu đã được tạo",
+                // });
+                const timeTable = new TimeTable();
+                timeTable.startTime = newStartTime;
+                timeTable.endTime = newEndTime;
+                timeTable.classId = classId;
+                timeTable.class = studentClass;
+                timeTable.teacherId = teacherId;
+                timeTable.teacher = teacher;
+                timeTable.majorId = majorId;
+                timeTable.major = major;
+                timeTable.duration = duration;
+                timeTable.status = 'create';
+                await timeTable.save();
+                timeTables.push(timeTable);
+            }
         }
         res.status(201).json({
             status: "SUCCESS",

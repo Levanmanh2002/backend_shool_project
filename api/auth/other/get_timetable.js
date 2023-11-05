@@ -98,27 +98,30 @@ router.get('/get-detail/:id', async (req, res) => {
 
 router.get('/get-duration', async (req, res) => {
     try {
-        if (type(req.query.startTime) == "String" || type(req.query.endTime) == "String") {
+        if (req.query.startTime == null|| req.query.endTime == null) {
             return res.status(205).json({
                 status: "FAIL",
                 message: "Biến đầu vào không hợp lệ",
                 data: result
             });
         }
-        const classId = req.body.class_id; // mã lớp học
+        const classId = req.query.class_id; // mã lớp học
         // thời gian bắt đầu trong tuần
         // ví dụ: bắt đầu là ngày 23/10/2023 thì truyển vào theo time là 23/10/2023 00:00:00
-        const startTime = new Date(req.body.startTime);
+        const startTime = new Date(parseInt(req.query.startTime));
         // thời gian kết thúc trong tuần
         // ví dụ: kết thúc là ngày 23/10/2023 thì truyển vào theo time là 23/10/2023 23:59:59
-        const endTime = new Date(req.body.endTime);
-        var result = await TimeTable.find({
-            classId: classId,
+        const endTime = new Date(parseInt(req.query.endTime));
+        const query = {
             $and: [
                 { startTime: { $gte: startTime } },
                 { endTime: { $lte: endTime } }
             ]
-        });
+        };
+        if(classId != null) {
+            query.classId = classId;
+        }
+        var result = await TimeTable.find(query);
 
         result = await fetchDataTimeTable(result);
 
@@ -128,7 +131,7 @@ router.get('/get-duration', async (req, res) => {
             data: result
         });
     } catch (e) {
-        console.log(error);
+        console.log(e);
         res.status(500).json({ error: "Lỗi máy chủ nội bộ" });
     }
 });
