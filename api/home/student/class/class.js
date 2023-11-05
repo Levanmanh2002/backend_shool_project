@@ -12,7 +12,10 @@ router.post('/create-class', async (req, res) => {
         const existingClass = await Class.findOne({ className });
 
         if (existingClass) {
-            return res.status(400).json({ error: 'Lớp học đã tồn tại' });
+            return res.status(400).json({
+                status: "check_class",
+                error: 'Lớp học đã tồn tại'
+            });
         }
 
         // Tạo một lớp học mới
@@ -20,6 +23,7 @@ router.post('/create-class', async (req, res) => {
         await newClass.save();
 
         res.status(201).json({
+            status: "SUCCESS",
             message: 'Lớp học mới đã được tạo',
             class: newClass,
             id: newClass.classId,
