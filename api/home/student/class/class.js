@@ -34,6 +34,51 @@ router.post('/create-class', async (req, res) => {
     }
 });
 
+router.put('/edit-class/:classId', async (req, res) => {
+    const classId = req.params.classId;
+    const updatedClassName = req.body.updatedClassName;
+
+    try {
+        const existingClass = await Class.findById(classId);
+
+        if (!existingClass) {
+            return res.status(404).json({ error: 'Lớp học không tồn tại' });
+        }
+
+        existingClass.className = updatedClassName;
+        await existingClass.save();
+
+        res.status(201).json({
+            message: 'Lớp học đã được chỉnh sửa',
+            class: existingClass,
+        });
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({ error: 'Lỗi máy chủ nội bộ' });
+    }
+});
+
+router.delete('/delete-class/:classId', async (req, res) => {
+    const classId = req.params.classId;
+
+    try {
+        const existingClass = await Class.findById(classId);
+
+        if (!existingClass) {
+            return res.status(404).json({ error: 'Lớp học không tồn tại' });
+        }
+
+        await Class.deleteOne({ _id: classId });
+
+        res.status(201).json({
+            message: 'Lớp học đã được xóa',
+        });
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({ error: 'Lỗi máy chủ nội bộ' });
+    }
+});
+
 router.get('/classes', async (req, res) => {
     try {
         const classes = await Class.find();
