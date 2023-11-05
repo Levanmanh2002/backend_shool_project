@@ -19,7 +19,7 @@ router.get('/class-info', async (req, res) => {
             });
         }
 
-        res.status(200).json({
+        res.status(201).json({
             message: 'Thông tin lớp học',
             classInfo: classInfo,
         });

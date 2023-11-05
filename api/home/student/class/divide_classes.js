@@ -33,7 +33,8 @@ router.post('/divide-classes', async (req, res) => {
             classObject.students.push(student);
 
             await Promise.all([classObject.save(), student.save()]);
-            // await student.save();
+            
+            console.log(`Class: ${student.class}, Students in class: ${studentsInCurrentClass}`);
         }
 
         if (allStudentsHaveClass) {

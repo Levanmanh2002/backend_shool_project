@@ -9,7 +9,7 @@ router.put('/update-teacher/:classId', async (req, res) => {
         const classId = req.params.classId;
         const { teacherId } = req.body;
 
-        const classExists = await Class.findOne({classId: classId});
+        const classExists = await Class.findOne({ classId: classId });
         if (!classExists) {
             return res.status(404).json({ error: 'Lớp học không tồn tại.' });
         }
@@ -48,6 +48,7 @@ router.get('/teachers', async (req, res) => {
             const studentCount = await Student.countDocuments({ _id: { $in: classItem.students } });
 
             return {
+                id: classItem.id,
                 className: classItem.className,
                 studentCount: studentCount,
                 teacher: classItem.teacher,
