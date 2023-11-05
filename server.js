@@ -36,13 +36,14 @@ const uploadImagesFirebaseStorageRouter = require("./api/auth/student/firebase/f
 const updateImageFirebaseStorageRouter = require("./api/auth/teacher/firebase/update_avatar")
 const profileStudentsRouter = require("./api/auth/student/profile")
 const updateAvatarStudentRouter = require("./api/auth/student/firebase/update_avatar")
-const timetableRouter = require('./api/auth/other/timetable');
-const getTimeTableRoute = require('./api/auth/other/get_timetable');
-const deleteTimeTableRoute = require('./api/auth/other/delete_timetable');
-const studentFeeRoute = require('./api/auth/fee/student_fee_router');
-const feeRouter = require('./api/auth/fee/fee_router');
-const paymentRouter = require('./api/auth/fee/payment_fee');
+const timetableRouter = require('./api/auth/other/timetable')
+const getTimeTableRoute = require('./api/auth/other/get_timetable')
+const deleteTimeTableRoute = require('./api/auth/other/delete_timetable')
+const studentFeeRoute = require('./api/auth/fee/student_fee_router')
+const feeRouter = require('./api/auth/fee/fee_router')
+const paymentRouter = require('./api/auth/fee/payment_fee')
 const semestersRouter = require('./api/home/schedule/schedule')
+const addStudentClassRouter = require('./api/home/student/class/add_student_class')
 
 app.use(cors({ credentials: true, origin: '*' }));
 app.use(cors({ credentials: true, origin: ['http://localhost:3000'] }))
@@ -83,10 +84,11 @@ app.use('/user', updateAvatarStudentRouter)
 app.use('/timetable', timetableRouter);
 app.use('/timetable', getTimeTableRoute);
 app.use('/timetable', deleteTimeTableRoute);
-app.use('/fee', feeRouter); // danh sách các phí mặc định
-app.use('/student-fee', studentFeeRoute); // danh sách phí học sinh hay lớp cần đóng cho một học kì
-app.use('/student-payment', paymentRouter); // api về các thanh toán của học sinh với trường
+app.use('/fee', feeRouter);
+app.use('/student-fee', studentFeeRoute);
+app.use('/student-payment', paymentRouter);
 app.use('/admin', semestersRouter);
+app.use('/admin', addStudentClassRouter);
 
 app.listen(port, () => {
     console.log(`Server running on port ${port}`);
