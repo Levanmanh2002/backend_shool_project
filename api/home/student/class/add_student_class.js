@@ -13,11 +13,17 @@ router.post('/add-students-to-class', async (req, res) => {
         const student = await Student.findById(studentIds);
 
         if (!student) {
-            return res.status(400).json({ error: 'Học sinh không tồn tại' });
+            return res.status(400).json({
+                status: "check_student",
+                error: 'Học sinh không tồn tại'
+            });
         }
 
         if (student.class) {
-            return res.status(400).json({ error: 'Học sinh đã có lớp học' });
+            return res.status(400).json({
+                status: "check_student_class",
+                error: 'Học sinh đã có lớp học'
+            });
         }
 
         // Tìm lớp học dựa trên tên lớp
@@ -25,13 +31,17 @@ router.post('/add-students-to-class', async (req, res) => {
 
         if (!classObject) {
             return res.status(400).json({
+                status: "check_class",
                 error: 'Lớp học không tồn tại'
             });
         }
 
         // Kiểm tra xem lớp học đã đủ 30 học sinh chưa
         if (classObject.students.length + studentIds.length >= 30) {
-            return res.status(400).json({ error: 'Lớp học đã đầy' });
+            return res.status(400).json({
+                status: "check_full_class",
+                error: 'Lớp học đã đầy'
+            });
         }
 
         // Tìm và kiểm tra học sinh từng người
@@ -39,7 +49,10 @@ router.post('/add-students-to-class', async (req, res) => {
             const student = await Student.findById(studentId);
 
             if (!student) {
-                return res.status(400).json({ error: 'Học sinh không tồn tại' });
+                return res.status(400).json({
+                    status: "check_student",
+                    error: 'Học sinh không tồn tại'
+                });
             }
 
             // Thêm học sinh vào danh sách học sinh của lớp
@@ -53,6 +66,7 @@ router.post('/add-students-to-class', async (req, res) => {
         await classObject.save();
 
         res.status(201).json({
+            status: "SUCCESS",
             message: 'Thêm học sinh vào lớp thành công',
             student: student,
             students: studentIds,
@@ -67,7 +81,7 @@ router.post('/add-students-to-class', async (req, res) => {
 router.get('/students-without-class', async (req, res) => {
     try {
         // Truy vấn danh sách học sinh chưa có lớp học
-        const studentsWithoutClass = await Student.find({ class: '' }).exec();
+        const studentsWithoutClass = await Student.find({ $or: [{ class: null }, { class: '' }] }).exec();
 
         // Trả về danh sách học sinh chưa có lớp học dưới dạng JSON
         res.status(201).json({ studentsWithoutClass });
