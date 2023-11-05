@@ -44,6 +44,7 @@ const feeRouter = require('./api/auth/fee/fee_router')
 const paymentRouter = require('./api/auth/fee/payment_fee')
 const semestersRouter = require('./api/home/schedule/schedule')
 const addStudentClassRouter = require('./api/home/student/class/add_student_class')
+const addTeachetClassRouter = require('./api/home/teacher/class/add_teacher_class')
 
 app.use(cors({ credentials: true, origin: '*' }));
 app.use(cors({ credentials: true, origin: ['http://localhost:3000'] }))
@@ -89,6 +90,7 @@ app.use('/student-fee', studentFeeRoute);
 app.use('/student-payment', paymentRouter);
 app.use('/admin', semestersRouter);
 app.use('/admin', addStudentClassRouter);
+app.use('/admin', addTeachetClassRouter);
 
 app.listen(port, () => {
     console.log(`Server running on port ${port}`);
