@@ -22,7 +22,7 @@ router.post('/move-student-to-new-class', async (req, res) => {
         const currentClass = await Class.findOne({ className: currentClassName });
         if (!currentClass) {
             return res.status(404).json({
-                status: "check_class",
+                status: "check_class_student",
                 error: 'Lớp học hiện tại không tồn tại'
             });
         }
