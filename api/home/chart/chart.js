@@ -7,6 +7,10 @@ router.get('/countNewStudents', async (req, res) => {
     const { startDate, endDate } = req.query;
 
     try {
+        if (!startDate || !endDate || isNaN(new Date(startDate)) || isNaN(new Date(endDate))) {
+            return res.status(400).json({ error: 'Ngày không hợp lệ' });
+        }
+
         const students = await Student.find({
             createdAt: {
                 $gte: new Date(startDate),
