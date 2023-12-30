@@ -49,6 +49,7 @@ const studentTransferRouter = require('./api/home/student/transfer/student_trans
 const chartRouter = require('./api/home/chart/chart')
 const numberChartRouter = require('./api/home/chart/number_chart')
 const totalTeacherRouter = require('./api/auth/teacher/total')
+const newListStudentRouter = require('./api/auth/student/new_list')
 
 app.use(cors({ credentials: true, origin: '*' }));
 app.use(cors({ credentials: true, origin: ['http://localhost:3000'] }))
@@ -99,6 +100,7 @@ app.use('/admin', studentTransferRouter);
 app.use('/chart', chartRouter);
 app.use('/chart', numberChartRouter);
 app.use('/teacher', totalTeacherRouter);
+app.use('/student', newListStudentRouter);
 
 app.listen(port, () => {
     console.log(`Server running on port ${port}`);
