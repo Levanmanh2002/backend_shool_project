@@ -48,6 +48,7 @@ const addTeachetClassRouter = require('./api/home/teacher/class/add_teacher_clas
 const studentTransferRouter = require('./api/home/student/transfer/student_transfer')
 const chartRouter = require('./api/home/chart/chart')
 const numberChartRouter = require('./api/home/chart/number_chart')
+const totalTeacherRouter = require('./api/auth/teacher/total')
 
 app.use(cors({ credentials: true, origin: '*' }));
 app.use(cors({ credentials: true, origin: ['http://localhost:3000'] }))
@@ -97,6 +98,7 @@ app.use('/admin', addTeachetClassRouter);
 app.use('/admin', studentTransferRouter);
 app.use('/chart', chartRouter);
 app.use('/chart', numberChartRouter);
+app.use('/teacher', totalTeacherRouter);
 
 app.listen(port, () => {
     console.log(`Server running on port ${port}`);

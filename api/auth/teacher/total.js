@@ -2,15 +2,14 @@ const express = require('express');
 const router = express.Router();
 const Teacher = require('../../../models/teacher');
 
-router.get('/retired-teachers', async (req, res) => {
+router.get('/total', async (req, res) => {
     try {
-        const retiredTeachers = await Teacher.find({ isWorking: false });
-
+        const totalTeachers = await Teacher.find({});
         res.status(201).json({
             status: "SUCCESS",
-            total: retiredTeachers.length,
-            message: "Danh sách những giáo viên đã nghỉ việc",
-            data: retiredTeachers
+            total: totalTeachers.length,
+            message: "Danh sách các giáo viên",
+            data: totalTeachers
         });
     } catch (error) {
         console.error(error);
