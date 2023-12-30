@@ -5,13 +5,18 @@ const Student = require('../../../models/student');
 router.get('/new_list', async (req, res) => {
     try {
         const currentYear = new Date().getFullYear();
-
         const firstDayOfCurrentYear = new Date(currentYear, 0, 1);
         const firstDayOfNextYear = new Date(currentYear + 1, 0, 1);
 
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 10;
+
+        const offset = (page - 1) * limit;
+
+
         const studentsEnrolledThisYear = await Student.find({
             createdAt: { $gte: firstDayOfCurrentYear, $lt: firstDayOfNextYear },
-        });
+        }).skip(offset).limit(limit);
 
         res.status(201).json({
             status: "SUCCESS",
@@ -24,5 +29,6 @@ router.get('/new_list', async (req, res) => {
         res.status(500).json({ error: 'Lỗi khi xử lý yêu cầu' });
     }
 });
+
 
 module.exports = router;
