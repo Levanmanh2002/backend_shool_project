@@ -35,6 +35,11 @@ const teacherSchema = new Schema({
         type: Boolean,
         default: true,
     },
+    system: {
+        type: Number,
+        enum: [1, 2, 3, 4],
+        default: 4, // Quyền mặc định nếu không được chỉ định
+    },
     createdAt: {
         type: Date,
         default: Date.now,
