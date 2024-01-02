@@ -54,8 +54,8 @@ const systemRouter = require('./api/home/system/system')
 const notificationRouter = require('./api/notification/notification')
 
 app.use(cors({ credentials: true, origin: '*' }));
-app.use(cors({ credentials: true, origin: ['http://localhost:3000', 'https://school-manager-793a1.web.app'] }))
-app.use(cookieParser())
+app.use(cors({ credentials: true, origin: ['http://localhost:3000', 'https://school-manager-793a1.web.app'] }));
+app.use(cookieParser());
 
 app.use(bodyParser());
 
