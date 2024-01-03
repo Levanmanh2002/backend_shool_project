@@ -80,7 +80,6 @@ exports.otpTemplate = `
                 background-color: white;
                 padding: 10px 20px;
                 gap: 12px;
-                width: 271px;
                 height: fit-content;
                 border-radius: 8px;
                 border: 1px solid #d2d5da;
@@ -136,13 +135,16 @@ exports.otpTemplate = `
             }
 
             .style-weight400{
-                color: var(--Color---Lightmode-Neutral-70, #4E535F); 
+                color: var(--Color---Lightmode-Neutral-70, #4E535F);
+                font-size: 14px;
                 font-weight: 400;
             }
 
             .style-weight600{
                 color: var(--Usage-Brand, #5661F5);
-                font-weight: 600;
+                font-family: 'Be Vietnam Pro';
+                font-size: 16px;
+                font-weight: 800;
             }
 
             .style-size16-weight600 {
