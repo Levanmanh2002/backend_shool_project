@@ -31,6 +31,10 @@ const teacherSchema = new Schema({
     verificationCode: String,
     resetTokenExpiration: Date,
     avatarUrl: String,
+    address: String,
+    city: String,
+    district: String,
+    ward: String,
     isWorking: {
         type: Boolean,
         default: true,
