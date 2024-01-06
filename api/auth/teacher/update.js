@@ -58,6 +58,10 @@ router.put('/update/teacher/:teacherId', async (req, res) => {
         existingTeacher.academicDegree = updatedTeacherData.academicDegree;
         existingTeacher.standardDegree = updatedTeacherData.standardDegree;
         existingTeacher.politicalTheory = updatedTeacherData.politicalTheory;
+        existingTeacher.address = updatedTeacherData.address;
+        existingTeacher.city = updatedTeacherData.city;
+        existingTeacher.district = updatedTeacherData.district;
+        existingTeacher.ward = updatedTeacherData.ward;
 
         await existingTeacher.save();
 
