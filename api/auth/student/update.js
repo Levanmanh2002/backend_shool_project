@@ -86,6 +86,10 @@ router.put('/update/student/:studentId', async (req, res) => {
         student.fatherFullName = updatedStudentData.fatherFullName;
         student.motherFullName = updatedStudentData.motherFullName;
         student.notes = updatedStudentData.notes;
+        student.address = updatedStudentData.address;
+        student.city = updatedStudentData.city;
+        student.district = updatedStudentData.district;
+        student.ward = updatedStudentData.ward;
 
         await student.save();
 

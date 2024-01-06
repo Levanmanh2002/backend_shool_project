@@ -49,6 +49,10 @@ const studentSchema = new Schema({
     verificationCode: String,
     resetTokenExpiration: Date,
     avatarUrl: String,
+    address: String,
+    city: String,
+    district: String,
+    ward: String,
     isStudying: {
         type: Boolean,   // học sinh đang học 
         default: true,
