@@ -4,6 +4,7 @@ const bcrypt = require('bcrypt');
 const { v4: uuidv4 } = require('uuid');
 const Student = require("../../../models/student");
 const nodemailer = require("nodemailer");
+// const faker = require('faker');
 
 let transporter = nodemailer.createTransport({
     service: "gmail",
@@ -177,10 +178,10 @@ router.post('/signup', async (req, res) => {
 
 module.exports = router;
 
-
+// http://localhost:3000/admin/auto-generate-students
 // router.post('/auto-generate-students', async (req, res) => {
 //     try {
-//         const totalStudents = 1000; // Số lượng học sinh muốn tạo
+//         const totalStudents = 1000;
 
 //         for (let i = 0; i < totalStudents; i++) {
 //             const year = new Date().getFullYear().toString().slice(-2);
@@ -208,46 +209,47 @@ module.exports = router;
 //                 mssv = `${khoadau}${count.toString().padStart(9, '0')}`;
 //             }
 
-//             const password = Math.floor(100000 + Math.random() * 900000).toString();
+//             const password = 'manh1234';
 //             const hashedPassword = await bcrypt.hash(password, 10);
 
 //             const studentId = uuidv4();
 
 //             const studentData = {
 //                 studentId: studentId,
-//                 gmail: `student${i}@example.com`,
-//                 phone: `123456789${i.toString().padStart(3, '0')}`,
-//                 fullName: `Student ${i}`,
+//                 gmail: faker.internet.email(),
+//                 phone: faker.phone.phoneNumber(),
+//                 fullName: faker.name.findName(),
 //                 birthDate: new Date(),
-//                 cccd: `cccd${i.toString().padStart(3, '0')}`,
-//                 birthPlace: `Place ${i}`,
+//                 cccd: faker.random.number({ min: 100000000, max: 999999999 }).toString(),
+//                 birthPlace: faker.address.city(),
 //                 customYear: year,
 //                 mssv: mssv,
 //                 password: hashedPassword,
-//                 gender: 'Male', // Giới tính có thể điều chỉnh tùy ý
-//                 hometown: `Hometown ${i}`,
-//                 permanentAddress: `Address ${i}`,
-//                 occupation: `Occupation ${i}`,
+//                 gender: faker.random.arrayElement(['Male', 'Female']),
+//                 hometown: faker.address.city(),
+//                 permanentAddress: faker.address.streetAddress(),
+//                 occupation: faker.name.jobTitle(),
 //                 students: [],
-//                 contactPhone: `987654321${i.toString().padStart(3, '0')}`,
-//                 contactAddress: `Contact Address ${i}`,
-//                 educationLevel: 'High School', // Trình độ học vấn có thể điều chỉnh tùy ý
-//                 graduationCertificate: `Graduation Certificate ${i}`,
-//                 academicPerformance: 'Excellent', // Học lực có thể điều chỉnh tùy ý
-//                 conduct: 'Good', // Hạnh kiểm có thể điều chỉnh tùy ý
-//                 classRanking10: '1st', // Học lực lớp 10 có thể điều chỉnh tùy ý
-//                 classRanking11: '2nd', // Học lực lớp 11 có thể điều chỉnh tùy ý
-//                 classRanking12: '3rd', // Học lực lớp 12 có thể điều chỉnh tùy ý
-//                 graduationYear: year,
-//                 ethnicity: 'Kinh', // Dân tộc có thể điều chỉnh tùy ý
-//                 religion: 'Không', // Tôn giáo có thể điều chỉnh tùy ý
-//                 beneficiary: 'Không',
-//                 area: 'Nội trú', // Khu vực có thể điều chỉnh tùy ý
-//                 idCardIssuedDate: new Date(),
-//                 idCardIssuedPlace: `Place ${i}`,
-//                 fatherFullName: `Father ${i}`,
-//                 motherFullName: `Mother ${i}`,
-//                 notes: `Notes ${i}`,
+//                 contactPhone: faker.phone.phoneNumber(),
+//                 contactAddress: faker.address.streetAddress(),
+//                 educationLevel: faker.random.word(),
+//                 graduationCertificate: [faker.random.word()],
+//                 academicPerformance: faker.random.word(),
+//                 conduct: faker.random.word(),
+//                 classRanking10: faker.random.word(),
+//                 classRanking11: faker.random.word(),
+//                 classRanking12: faker.random.word(),
+//                 graduationYear: faker.datatype.number({ min: 2022, max: 2023 }).toString(),
+//                 ethnicity: faker.random.word(),
+//                 religion: faker.random.word(),
+//                 beneficiary: faker.random.word(),
+//                 area: faker.random.word(),
+//                 idCardIssuedDate: faker.date.past(),
+//                 idCardIssuedPlace: faker.address.city(),
+//                 fatherFullName: faker.name.findName(),
+//                 motherFullName: faker.name.findName(),
+//                 notes: faker.random.words(),
+//                 avatarUrl: faker.image.avatar(),
 //                 verificationCode: '',
 //                 resetTokenExpiration: null,
 //                 isStudying: true,
