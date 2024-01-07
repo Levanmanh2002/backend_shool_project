@@ -52,6 +52,7 @@ const totalTeacherRouter = require('./api/auth/teacher/total')
 const newListStudentRouter = require('./api/auth/student/new_list')
 const systemRouter = require('./api/home/system/system')
 const notificationRouter = require('./api/notification/notification')
+const expenseRouter = require('./api/home/expense/expense')
 
 app.use(cors({ credentials: true, origin: '*' }));
 app.use(cors({ credentials: true, origin: ['http://localhost:3000', 'https://school-manager-793a1.web.app'] }));
@@ -105,6 +106,7 @@ app.use('/teacher', totalTeacherRouter);
 app.use('/student', newListStudentRouter);
 app.use('/admin', systemRouter);
 app.use('/admin', notificationRouter);
+app.use('/admin', expenseRouter);
 
 app.listen(port, () => {
     console.log(`Server running on port ${port}`);
