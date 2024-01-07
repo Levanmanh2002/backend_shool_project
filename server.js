@@ -55,7 +55,7 @@ const notificationRouter = require('./api/notification/notification')
 const expenseRouter = require('./api/home/expense/expense')
 
 app.use(cors({ credentials: true, origin: '*' }));
-app.use(cors({ credentials: true, origin: ['http://localhost:3000', 'https://school-manager-793a1.web.app'] }));
+app.use(cors({ credentials: true, origin: ['https://school-manager-793a1.web.app'] }));
 app.use(cookieParser());
 
 app.use(bodyParser());
