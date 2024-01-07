@@ -16,6 +16,8 @@ router.get('/class-info', async (req, res) => {
             const numberOfStudents = students.length;
             classInfo.push({
                 className: cls.className,
+                id: cls.id,
+                idClass: cls.classId,
                 numberOfStudents: numberOfStudents,
                 teacher: teacher,
                 students: students,
