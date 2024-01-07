@@ -2,26 +2,32 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const subFeeSchema = new Schema({
+    // Mã duy nhất để tìm kiếm
     searchCode: {
         type: String,
         required: true,
     },
+    // Nội dung hoặc mô tả của học phí
     content: {
         type: String,
         required: true,
     },
+    // Số tiền phát hành ban đầu
     issuedAmount: {
         type: Number,
         required: true,
     },
+    // Số tiền đã đóng
     paidAmount: {
         type: Number,
         required: true,
     },
+    // Số tiền còn lại phải đóng
     remainingAmount: {
         type: Number,
         required: true,
     },
+    // Hạn đóng học phí
     debtAmount: {
         type: Number,
         required: true,

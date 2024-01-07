@@ -53,7 +53,7 @@ const expenseRouter = require('./api/home/expense/expense')
 const feeRouter = require('./api/home/fee/fee')
 
 app.use(cors({ credentials: true, origin: '*' }));
-app.use(cors({ credentials: true, origin: ['https://school-manager-793a1.web.app'] }));
+app.use(cors({ credentials: true, origin: ['http://localhost:3000', 'https://backend-shool-project.onrender.com', 'https://school-manager-793a1.web.app'] }));
 app.use(cookieParser());
 
 app.use(bodyParser());
