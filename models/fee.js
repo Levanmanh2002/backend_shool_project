@@ -27,11 +27,12 @@ const subFeeSchema = new Schema({
         type: Number,
         required: true,
     },
-    // Hạn đóng học phí
+    // Ghi nợ học phí
     debtAmount: {
         type: Number,
         required: true,
     },
+    // Hạn đóng học phí
     dueDate: {
         type: String,
         required: true,

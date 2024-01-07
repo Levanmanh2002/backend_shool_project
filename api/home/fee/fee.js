@@ -95,6 +95,53 @@ router.put('/edit_name_fees/:id', async (req, res) => {
   }
 });
 
+router.put('/edit_fees/:feeId/edit_subfees/:subFeeId', async (req, res) => {
+  try {
+    const { feeId, subFeeId } = req.params;
+    const { searchCode, content, issuedAmount, paidAmount, remainingAmount, debtAmount, dueDate } = req.body;
+
+    const existingFee = await Fee.findOne({ _id: feeId });
+
+    if (!existingFee) {
+      return res.status(404).json({
+        status: 'ERROR',
+        message: 'Fee not found',
+      });
+    }
+
+    const subFeeIndex = existingFee.subFees.findIndex(subFee => subFee._id.toString() === subFeeId);
+
+    if (subFeeIndex === -1) {
+      return res.status(404).json({
+        status: 'ERROR',
+        message: 'SubFee not found',
+      });
+    }
+
+    existingFee.subFees[subFeeIndex].searchCode = searchCode;
+    existingFee.subFees[subFeeIndex].content = content;
+    existingFee.subFees[subFeeIndex].issuedAmount = issuedAmount;
+    existingFee.subFees[subFeeIndex].paidAmount = paidAmount;
+    existingFee.subFees[subFeeIndex].remainingAmount = remainingAmount;
+    existingFee.subFees[subFeeIndex].debtAmount = debtAmount;
+    existingFee.subFees[subFeeIndex].dueDate = dueDate;
+
+    const updatedFee = await existingFee.save();
+
+    res.status(201).json({
+      status: 'SUCCESS',
+      data: updatedFee,
+    });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      status: 'ERROR',
+      message: 'Internal Server Error',
+    });
+  }
+});
+
 router.delete('/fees/:feeId/subfees/:subFeeId', async (req, res) => {
   try {
     const { feeId, subFeeId } = req.params;
