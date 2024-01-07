@@ -17,20 +17,22 @@ const studentSchema = new Schema({
     permanentAddress: String,   // địa chỉ thường trú học sinh
     occupation: String, // nghề nghiệp học sinh
     class: String,
+    // lớp học học sinh
     students: [
         {
             type: Schema.Types.ObjectId,
             ref: 'Class'
         }
-    ],  // lớp học học sinh
+    ],
     contactPhone: String,   // số điện thoại liên lạc
     contactAddress: String, // địa chỉ liên lạc
     educationLevel: String, // trình độ học vấn
+    // giấy chứng nhận tốt nghiệp
     graduationCertificate: [
         {
             type: String,
         }
-    ],  // giấy chứng nhận tốt nghiệp
+    ],
     academicPerformance: String,    // học lực học sinh
     conduct: String,    // hạnh kiểm học sinh
     classRanking10: String, // học lực lớp 10
@@ -53,6 +55,13 @@ const studentSchema = new Schema({
     city: String,
     district: String,
     ward: String,
+    // Danh sách các khoản phải đóng của học sinh
+    feesToPay: [
+        {
+            type: Schema.Types.ObjectId,
+            ref: 'Fee',
+        }
+    ],
     isStudying: {
         type: Boolean,   // học sinh đang học 
         default: true,

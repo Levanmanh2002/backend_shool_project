@@ -39,9 +39,6 @@ const updateAvatarStudentRouter = require("./api/auth/student/firebase/update_av
 const timetableRouter = require('./api/auth/other/timetable')
 const getTimeTableRoute = require('./api/auth/other/get_timetable')
 const deleteTimeTableRoute = require('./api/auth/other/delete_timetable')
-const studentFeeRoute = require('./api/auth/fee/student_fee_router')
-const feeRouter = require('./api/auth/fee/fee_router')
-const paymentRouter = require('./api/auth/fee/payment_fee')
 const semestersRouter = require('./api/home/schedule/schedule')
 const addStudentClassRouter = require('./api/home/student/class/add_student_class')
 const addTeachetClassRouter = require('./api/home/teacher/class/add_teacher_class')
@@ -53,6 +50,7 @@ const newListStudentRouter = require('./api/auth/student/new_list')
 const systemRouter = require('./api/home/system/system')
 const notificationRouter = require('./api/notification/notification')
 const expenseRouter = require('./api/home/expense/expense')
+const feeRouter = require('./api/home/fee/fee')
 
 app.use(cors({ credentials: true, origin: '*' }));
 app.use(cors({ credentials: true, origin: ['https://school-manager-793a1.web.app'] }));
@@ -93,9 +91,6 @@ app.use('/user', updateAvatarStudentRouter)
 app.use('/timetable', timetableRouter);
 app.use('/timetable', getTimeTableRoute);
 app.use('/timetable', deleteTimeTableRoute);
-app.use('/fee', feeRouter);
-app.use('/student-fee', studentFeeRoute);
-app.use('/student-payment', paymentRouter);
 app.use('/admin', semestersRouter);
 app.use('/admin', addStudentClassRouter);
 app.use('/admin', addTeachetClassRouter);
@@ -107,6 +102,7 @@ app.use('/student', newListStudentRouter);
 app.use('/admin', systemRouter);
 app.use('/admin', notificationRouter);
 app.use('/admin', expenseRouter);
+app.use('/admin', feeRouter)
 
 app.listen(port, () => {
     console.log(`Server running on port ${port}`);

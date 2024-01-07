@@ -1,12 +1,35 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-const feeSchema = new Schema({
-    name: String,
-    money: Number,
-    description: String,
-    quantity_credits: Number,
-    type: Number,
+const subFeeSchema = new Schema({
+    searchCode: {
+        type: String,
+        required: true,
+    },
+    content: {
+        type: String,
+        required: true,
+    },
+    issuedAmount: {
+        type: Number,
+        required: true,
+    },
+    paidAmount: {
+        type: Number,
+        required: true,
+    },
+    remainingAmount: {
+        type: Number,
+        required: true,
+    },
+    debtAmount: {
+        type: Number,
+        required: true,
+    },
+    dueDate: {
+        type: String,
+        required: true,
+    },
     createdAt: {
         type: Date,
         default: Date.now,
@@ -14,7 +37,15 @@ const feeSchema = new Schema({
     updatedAt: {
         type: Date,
         default: Date.now,
+    }
+});
+
+const feeSchema = new Schema({
+    name: {
+        type: String,
+        required: true,
     },
+    subFees: [subFeeSchema],
 });
 
 const Fee = mongoose.model('Fee', feeSchema);
