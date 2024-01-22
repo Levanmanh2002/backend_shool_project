@@ -51,6 +51,7 @@ const systemRouter = require('./api/home/system/system')
 const notificationRouter = require('./api/notification/notification')
 const expenseRouter = require('./api/home/expense/expense')
 const feeRouter = require('./api/home/fee/fee')
+const totalAllRouter = require('./api/routes/total')
 
 app.use(cors({ credentials: true, origin: '*' }));
 app.use(cors({ credentials: true, origin: ['http://localhost:3000', 'https://backend-shool-project.onrender.com', 'https://school-manager-793a1.web.app'] }));
@@ -102,7 +103,8 @@ app.use('/student', newListStudentRouter);
 app.use('/admin', systemRouter);
 app.use('/admin', notificationRouter);
 app.use('/admin', expenseRouter);
-app.use('/admin', feeRouter)
+app.use('/admin', feeRouter);
+app.use('/routes', totalAllRouter);
 
 app.listen(port, () => {
     console.log(`Server running on port ${port}`);
