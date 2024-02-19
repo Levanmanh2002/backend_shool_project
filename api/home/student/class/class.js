@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { v4: uuidv4 } = require('uuid');
 const Class = require('../../../../models/class');
+const Student = require('../../../../models/student');
 
 router.post('/create-class', async (req, res) => {
     try {
@@ -68,10 +69,18 @@ router.delete('/delete-class/:classId', async (req, res) => {
             return res.status(404).json({ error: 'Lớp học không tồn tại' });
         }
 
+        const studentsInClass = existingClass.students;
+
         await Class.deleteOne({ _id: classId });
 
+        await Student.updateMany(
+            { _id: { $in: studentsInClass } },
+            { $unset: { class: "" } }
+        );
+
+
         res.status(201).json({
-            message: 'Lớp học đã được xóa',
+            message: 'Lớp học đã được xóa và thông tin học sinh đã được cập nhật',
         });
     } catch (error) {
         console.error('Error:', error);

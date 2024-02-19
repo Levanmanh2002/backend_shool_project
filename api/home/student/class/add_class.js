@@ -1,7 +1,9 @@
 const express = require('express');
 const router = express.Router();
+const { v4: uuidv4 } = require('uuid');
 
 const Class = require("../../../../models/class")
+const Teacher = require("../../../../models/teacher")
 const Student = require("../../../../models/student")
 
 router.post('/add-students-to-class', async (req, res) => {
@@ -85,6 +87,51 @@ router.get('/students-without-class', async (req, res) => {
 
         // Trả về danh sách học sinh chưa có lớp học dưới dạng JSON
         res.status(201).json({ studentsWithoutClass });
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({ error: 'Lỗi máy chủ nội bộ' });
+    }
+});
+
+
+router.post('/create-list-student-and-teacher-class', async (req, res) => {
+    try {
+        const { className, teacherId, studentIds } = req.body;
+        const classId = uuidv4();
+
+        // Kiểm tra lớp học đã tồn tại chưa
+        const existingClass = await Class.findOne({ className: className });
+        if (existingClass) {
+            return res.status(404).json({ error: 'Lớp học đã tồn tại' });
+        }
+
+        // Kiểm tra xem giáo viên tồn tại
+        const existingTeacher = await Teacher.findById(teacherId);
+        if (!existingTeacher) {
+            return res.status(404).json({ error: 'Giáo viên không tồn tại' });
+        }
+
+        // Kiểm tra xem danh sách học sinh tồn tại
+        const existingStudents = await Student.find({ _id: { $in: studentIds } });
+        if (existingStudents.length !== studentIds.length) {
+            return res.status(404).json({ error: 'Một hoặc nhiều học sinh không tồn tại' });
+        }
+
+        // Tạo lớp học mới
+        const newClass = new Class({
+            className: className,
+            teacher: teacherId,
+            students: studentIds,
+            classId: classId,
+        });
+
+        // Lưu lớp học vào cơ sở dữ liệu
+        await newClass.save();
+
+        res.status(201).json({
+            message: 'Lớp học mới đã được tạo',
+            class: newClass
+        });
     } catch (error) {
         console.error('Error:', error);
         res.status(500).json({ error: 'Lỗi máy chủ nội bộ' });
