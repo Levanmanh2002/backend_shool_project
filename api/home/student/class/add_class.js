@@ -93,7 +93,6 @@ router.get('/students-without-class', async (req, res) => {
     }
 });
 
-
 router.post('/create-list-student-and-teacher-class', async (req, res) => {
     try {
         const { className, teacherId, studentIds, job } = req.body;

@@ -3,6 +3,7 @@ const router = express.Router();
 const { v4: uuidv4 } = require('uuid');
 const Class = require('../../../../models/class');
 const Student = require('../../../../models/student');
+const Teacher = require('../../../../models/teacher');
 
 router.post('/create-class', async (req, res) => {
     try {
@@ -37,7 +38,7 @@ router.post('/create-class', async (req, res) => {
 
 router.put('/edit-class/:classId', async (req, res) => {
     const classId = req.params.classId;
-    const updatedClassName = req.body.updatedClassName;
+    const { updatedClassName, updatedTeacherId, updatedJob } = req.body;
 
     try {
         const existingClass = await Class.findById(classId);
@@ -46,12 +47,60 @@ router.put('/edit-class/:classId', async (req, res) => {
             return res.status(404).json({ error: 'Lớp học không tồn tại' });
         }
 
-        existingClass.className = updatedClassName;
+        // Kiểm tra xem giáo viên tồn tại (nếu có sự thay đổi)
+        if (updatedTeacherId) {
+            const existingTeacher = await Teacher.findById(updatedTeacherId);
+            if (!existingTeacher) {
+                return res.status(404).json({ error: 'Giáo viên không tồn tại' });
+            }
+            existingClass.teacher = updatedTeacherId;
+        }
+
+        // Cập nhật tên lớp (nếu có sự thay đổi)
+        if (updatedClassName) {
+            existingClass.className = updatedClassName;
+        }
+
+        // Cập nhật ngành nghề (nếu có sự thay đổi)
+        if (updatedJob) {
+            existingClass.job = updatedJob;
+        }
+
         await existingClass.save();
 
         res.status(201).json({
-            message: 'Lớp học đã được chỉnh sửa',
+            message: 'Thông tin lớp học đã được chỉnh sửa',
             class: existingClass,
+        });
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({ error: 'Lỗi máy chủ nội bộ' });
+    }
+});
+
+router.delete('/remove-student-from-class/:classId/:studentId', async (req, res) => {
+    const classId = req.params.classId;
+    const studentId = req.params.studentId;
+
+    try {
+        const existingClass = await Class.findById(classId);
+
+        if (!existingClass) {
+            return res.status(404).json({ error: 'Lớp học không tồn tại' });
+        }
+
+        // Kiểm tra xem học sinh có tồn tại trong lớp học không
+        const studentIndex = existingClass.students.indexOf(studentId);
+        if (studentIndex === -1) {
+            return res.status(404).json({ error: 'Học sinh không tồn tại trong lớp học' });
+        }
+
+        // Xóa học sinh khỏi danh sách của lớp học
+        existingClass.students.splice(studentIndex, 1);
+        await existingClass.save();
+
+        res.status(201).json({
+            message: 'Học sinh đã được xóa khỏi lớp học',
         });
     } catch (error) {
         console.error('Error:', error);
