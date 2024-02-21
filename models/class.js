@@ -11,7 +11,8 @@ const classSchema = new Schema({
     teacher: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Teacher'
-    }
+    },
+    job: String,
 });
 
 const Class = mongoose.model('Class', classSchema);

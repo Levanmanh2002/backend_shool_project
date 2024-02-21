@@ -96,7 +96,7 @@ router.get('/students-without-class', async (req, res) => {
 
 router.post('/create-list-student-and-teacher-class', async (req, res) => {
     try {
-        const { className, teacherId, studentIds } = req.body;
+        const { className, teacherId, studentIds, job } = req.body;
         const classId = uuidv4();
 
         // Kiểm tra lớp học đã tồn tại chưa
@@ -123,6 +123,7 @@ router.post('/create-list-student-and-teacher-class', async (req, res) => {
             teacher: teacherId,
             students: studentIds,
             classId: classId,
+            job: job,
         });
 
         // Lưu lớp học vào cơ sở dữ liệu
