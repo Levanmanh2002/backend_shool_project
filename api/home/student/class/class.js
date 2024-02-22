@@ -38,7 +38,7 @@ router.post('/create-class', async (req, res) => {
 
 router.put('/edit-class/:classId', async (req, res) => {
     const classId = req.params.classId;
-    const { updatedClassName, updatedTeacherId, updatedJob } = req.body;
+    const { updatedClassName, updatedTeacherId, updatedJob, updatedStudentIds } = req.body;
 
     try {
         const existingClass = await Class.findById(classId);
@@ -66,11 +66,45 @@ router.put('/edit-class/:classId', async (req, res) => {
             existingClass.job = updatedJob;
         }
 
+        // Kiểm tra xem danh sách học sinh tồn tại và cập nhật nếu có sự thay đổi
+        if (updatedStudentIds) {
+            const existingStudents = await Student.find({ _id: { $in: updatedStudentIds } });
+
+            // Lọc ra những studentId mà chưa có trong danh sách học sinh của lớp học
+            const newStudentIds = updatedStudentIds.filter(studentId => !existingClass.students.includes(studentId));
+
+            // Nếu có studentId mới, thêm vào danh sách học sinh của lớp học
+            if (newStudentIds.length > 0) {
+                existingClass.students = [...existingClass.students, ...newStudentIds];
+            }
+        }
+
         await existingClass.save();
+
+        const teachers = await Teacher.find({ _id: { $in: existingClass.teacher } });
+        const students = await Student.find({ _id: { $in: existingClass.students } });
+
+        const teacherInfo = teachers.map(teacher => ({
+            id: teacher._id,
+            teacherId: teacher.teacherId,
+            fullName: teacher.fullName,
+        }));
+
+        const studentInfo = students.map(student => ({
+            id: student._id,
+            studentId: student.studentId,
+            fullName: student.fullName,
+        }));
 
         res.status(201).json({
             message: 'Thông tin lớp học đã được chỉnh sửa',
-            class: existingClass,
+            class: {
+                classId: existingClass.classId,
+                className: existingClass.className,
+                students: studentInfo,
+                teacher: teacherInfo,
+                job: existingClass.job,
+            },
         });
     } catch (error) {
         console.error('Error:', error);
