@@ -37,7 +37,7 @@ router.post('/mssv', async (req, res) => {
 
         const query = { mssv: searchQuery };
 
-        const students = await Student.find(query);
+        const students = await Student.find(query).populate('feesToPay');
         res.status(201).json({
             status: "SUCCESS",
             message: "Tìm kiếm học sinh thành công",
