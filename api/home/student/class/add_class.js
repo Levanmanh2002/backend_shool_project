@@ -83,7 +83,7 @@ router.post('/add-students-to-class', async (req, res) => {
 router.get('/students-without-class', async (req, res) => {
     try {
         // Truy vấn danh sách học sinh chưa có lớp học
-        const studentsWithoutClass = await Student.find({ $or: [{ class: null }, { class: '' }] }).exec();
+        const studentsWithoutClass = await Student.find({ $or: [{ class: null }, { class: '' }] }).populate('feesToPay').exec();
 
         // Trả về danh sách học sinh chưa có lớp học dưới dạng JSON
         res.status(201).json({ studentsWithoutClass });
