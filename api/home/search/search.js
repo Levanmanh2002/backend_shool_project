@@ -31,6 +31,27 @@ router.post('/students', async (req, res) => {
     }
 });
 
+router.post('/mssv', async (req, res) => {
+    try {
+        const { searchQuery } = req.query;
+
+        const query = { mssv: searchQuery };
+
+        const students = await Student.find(query);
+        res.status(201).json({
+            status: "SUCCESS",
+            message: "Tìm kiếm học sinh thành công",
+            data: students,
+        });
+
+    } catch (error) {
+        res.status(500).json({
+            status: "FAIL",
+            message: "Lỗi máy chủ",
+        });
+    }
+});
+
 
 router.post('/teachers', async (req, res) => {
     try {
