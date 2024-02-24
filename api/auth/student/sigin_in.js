@@ -11,7 +11,6 @@ router.post('/signin', async (req, res) => {
     try {
         const { mssv, password } = req.body;
 
-        // const student = await Student.findOne({ mssv }).populate('feesToPay').populate('students');
         const student = await Student.findOne({ mssv }).populate('feesToPay');
 
         if (!student) {
