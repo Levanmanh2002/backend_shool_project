@@ -40,7 +40,7 @@ router.get('/new_list', async (req, res) => {
 
         const studentsEnrolledThisYear = await Student.find({
             createdAt: { $gte: firstDayOfCurrentYear, $lt: firstDayOfNextYear },
-        }).skip(offset).limit(limit);
+        }).skip(offset).limit(limit).populate('feesToPay');
 
         res.status(201).json({
             status: "SUCCESS",

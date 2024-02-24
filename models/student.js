@@ -59,7 +59,7 @@ const studentSchema = new Schema({
     feesToPay: [
         {
             type: Schema.Types.ObjectId,
-            ref: 'Fee',
+            ref: 'TuitionFee',
         }
     ],
     isStudying: {

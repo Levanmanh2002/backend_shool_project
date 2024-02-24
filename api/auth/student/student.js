@@ -5,7 +5,7 @@ const Student = require('../../../models/student');
 // Endpoint để lấy danh sách học sinh đang học
 router.get('/students/active', async (req, res) => {
     try {
-        const students = await Student.find({ isStudying: true });
+        const students = await Student.find({ isStudying: true }).populate('feesToPay');
         res.status(201).json({
             status: 'SUCCESS',
             message: 'Danh sách học sinh đang học',
@@ -21,7 +21,7 @@ router.get('/students/active', async (req, res) => {
 // Endpoint để lấy danh sách học sinh đã nghỉ học
 router.get('/students/inactive', async (req, res) => {
     try {
-        const students = await Student.find({ 'selfSuspension.isSelfSuspended': false });
+        const students = await Student.find({ 'selfSuspension.isSelfSuspended': false }).populate('feesToPay');
         res.status(201).json({
             status: 'SUCCESS',
             message: 'Danh sách học sinh đã nghỉ học',
@@ -36,7 +36,7 @@ router.get('/students/inactive', async (req, res) => {
 // Endpoint để lấy danh sách học sinh đang bị đình chỉ
 router.get('/students/suspended', async (req, res) => {
     try {
-        const students = await Student.find({ 'suspension.isSuspended': true });
+        const students = await Student.find({ 'suspension.isSuspended': true }).populate('feesToPay');
         res.status(201).json({
             status: 'SUCCESS',
             message: 'Danh sách học sinh đang bị đình chỉ',
@@ -51,7 +51,7 @@ router.get('/students/suspended', async (req, res) => {
 // Endpoint để lấy danh sách học sinh bị đuổi học
 router.get('/students/expelled', async (req, res) => {
     try {
-        const students = await Student.find({ 'expulsion.isExpelled': true });
+        const students = await Student.find({ 'expulsion.isExpelled': true }).populate('feesToPay');
         res.status(201).json({
             status: 'SUCCESS',
             message: 'Danh sách học sinh bị đuổi học',
