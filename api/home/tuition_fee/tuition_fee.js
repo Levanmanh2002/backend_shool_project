@@ -9,7 +9,10 @@ router.post('/create_tuition_fee', async (req, res) => {
     try {
         const existingTuitionFee = await TuitionFee.findOne({ maTraCuu: req.body.maTraCuu });
         if (existingTuitionFee) {
-            return res.status(400).json({ error: 'Mã tra cứu đã tồn tại trong cơ sở dữ liệu.' });
+            return res.status(400).json({
+                status: "ERRORCODE",
+                error: 'Mã tra cứu đã tồn tại trong cơ sở dữ liệu.',
+            });
         }
 
         // Tạo học phí mới
