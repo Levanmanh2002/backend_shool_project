@@ -59,6 +59,47 @@ router.post('/upload-avatar-teacher', upload.single('file'), async (req, res) =>
     }
 });
 
+
+router.post('/upload-background-teacher', upload.single('file'), async (req, res) => {
+    try {
+        const { teacherId } = req.body;
+        const file = req.file;
+
+        const tempFilePath = `teacher_background_image_${teacherId}_${file.originalname}.jpg`;
+        fs.writeFileSync(tempFilePath, file.buffer);
+
+        const filePath = tempFilePath
+        const fileName = `${teacherId}-${file.originalname}`;
+        const fileDestination = `teacher_background_image_/${teacherId}/${fileName}`;
+
+        await bucket.upload(filePath, {
+            destination: fileDestination,
+        });
+
+        fs.unlinkSync(tempFilePath);
+
+        const backgroundImage = await bucket.file(fileDestination).getSignedUrl({
+            action: 'read',
+            expires: '03-01-2500',
+        });
+
+        let teacher = await Teacher.findOne({ teacherId });
+
+        if (teacher.backgroundImageUrl) {
+            teacher.backgroundImageUrl = backgroundImage[0];
+        } else {
+            teacher.backgroundImageUrl = backgroundImage[0];
+        }
+
+        await teacher.save();
+
+        res.status(201).json({ message: 'Background Image uploaded and URL saved successfully.' });
+    } catch (error) {
+        console.error('Error uploading avatar:', error);
+        res.status(500).json({ error: 'An error occurred while uploading avatar.' });
+    }
+});
+
 // router.put('/edit-avatar/:teacherId', upload.single('file'), async (req, res) => {
 //     try {
 //         const teacherId = req.params.teacherId;
