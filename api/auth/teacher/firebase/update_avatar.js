@@ -42,15 +42,15 @@ router.post('/upload-avatar-teacher', upload.single('file'), async (req, res) =>
             expires: '03-01-2500',
         });
 
-        // let teacher = await Teacher.findOne({ teacherId });
+        let teacher = await Teacher.findOne({ teacherId });
 
-        // if (teacher.avatarUrl) {
-        //     teacher.avatarUrl = imageUrl[0];
-        // } else {
-        //     teacher.avatarUrl = imageUrl[0];
-        // }
+        if (teacher.avatarUrl) {
+            teacher.avatarUrl = imageUrl[0];
+        } else {
+            teacher.avatarUrl = imageUrl[0];
+        }
 
-        // await teacher.save();
+        await teacher.save();
 
         res.status(201).json({ message: 'Avatar uploaded and URL saved successfully.' });
     } catch (error) {
