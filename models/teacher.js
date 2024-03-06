@@ -31,7 +31,6 @@ const teacherSchema = new Schema({
     verificationCode: String,
     resetTokenExpiration: Date,
     avatarUrl: String,
-    backgroundImageUrl: String,
     address: String,
     city: String,
     district: String,
