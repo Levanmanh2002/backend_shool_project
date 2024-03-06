@@ -4,7 +4,6 @@ const router = express.Router();
 const TuitionFee = require("../../../models/tuition_fee");
 const Student = require("../../../models/student");
 
-
 router.post('/create_tuition_fee', async (req, res) => {
     try {
         const existingTuitionFee = await TuitionFee.findOne({ maTraCuu: req.body.maTraCuu });
@@ -135,6 +134,18 @@ router.put('/update_tuition_fee/:tuitionFeeId', async (req, res) => {
     }
 });
 
+router.get('/search_fees', async (req, res) => {
+    const maTraCuu = req.query.maTraCuu;
 
+    try {
+        const result = await TuitionFee.find({ maTraCuu: { $regex: maTraCuu, $options: 'i' } });
+
+        res.status(201).json(result);
+
+    } catch (error) {
+        console.error('Error searching by maTraCuu:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
 
 module.exports = router;
