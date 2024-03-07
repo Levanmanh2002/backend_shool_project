@@ -4,15 +4,31 @@ const router = express.Router();
 const TuitionFee = require("../../../models/tuition_fee");
 const Student = require("../../../models/student");
 
+function generateRandomCode(length) {
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    let code = '';
+    for (let i = 0; i < length; i++) {
+        const randomIndex = Math.floor(Math.random() * characters.length);
+        code += characters.charAt(randomIndex);
+    }
+    return code;
+}
+
 router.post('/create_tuition_fee', async (req, res) => {
     try {
-        const existingTuitionFee = await TuitionFee.findOne({ maTraCuu: req.body.maTraCuu });
-        if (existingTuitionFee) {
-            return res.status(400).json({
-                status: "ERRORCODE",
-                error: 'Mã tra cứu đã tồn tại trong cơ sở dữ liệu.',
-            });
-        }
+
+        let maTraCuu = '';
+
+        do {
+            maTraCuu = generateRandomCode(6);
+
+            const existingTuitionFee = await TuitionFee.findOne({ maTraCuu });
+            if (!existingTuitionFee) {
+                break;
+            }
+        } while (true);
+
+        req.body.maTraCuu = maTraCuu;
 
         // Tạo học phí mới
         const newTuitionFee = await TuitionFee.create(req.body);
@@ -35,7 +51,6 @@ router.post('/create_tuition_fee', async (req, res) => {
         res.status(201).json({
             status: 'SUCCESS',
             message: 'Đã thêm học phí mới và cập nhật cho tất cả học sinh thành công.',
-            data: newTuitionFee,
         });
     } catch (error) {
         console.error('Đã xảy ra lỗi:', error);
@@ -93,18 +108,10 @@ router.delete('/delete_tuition_fee/:tuitionFeeId', async (req, res) => {
 
 router.put('/update_tuition_fee/:tuitionFeeId', async (req, res) => {
     const tuitionFeeId = req.params.tuitionFeeId;
-    const updatedTuitionFeeData = req.body;
 
     try {
-        // Kiểm tra xem mã tra cứu mới có trùng với các học phí khác không
-        const { maTraCuu } = updatedTuitionFeeData;
-        const existingTuitionFee = await TuitionFee.findOne({ maTraCuu: maTraCuu, _id: { $ne: tuitionFeeId } });
-        if (existingTuitionFee) {
-            return res.status(400).json({ error: 'Mã tra cứu đã tồn tại trong cơ sở dữ liệu.' });
-        }
-
         // Chỉnh sửa học phí
-        const updatedTuitionFee = await TuitionFee.findByIdAndUpdate(tuitionFeeId, updatedTuitionFeeData, { new: true });
+        const updatedTuitionFee = await TuitionFee.findByIdAndUpdate(tuitionFeeId, { new: true });
 
         if (!updatedTuitionFee) {
             return res.status(404).json({ error: 'Không tìm thấy học phí.' });
