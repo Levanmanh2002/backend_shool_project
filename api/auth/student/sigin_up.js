@@ -2,9 +2,12 @@ const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcrypt');
 const { v4: uuidv4 } = require('uuid');
-const Student = require("../../../models/student");
 const nodemailer = require("nodemailer");
+const userFormatTemplate = require('../html/user_format');
 // const faker = require('faker');
+
+const Student = require("../../../models/student");
+const Major = require("../../../models/major");
 
 let transporter = nodemailer.createTransport({
     service: "gmail",
@@ -42,8 +45,28 @@ router.post('/signup', async (req, res) => {
             });
         }
 
+        // Kiểm tra xem ngành nghề đã được chọn chưa
+        if (!studentData.major) {
+            return res.status(400).json({
+                status: "missing_major",
+                error: 'Vui lòng cung cấp chuyên ngành cho sinh viên'
+            });
+        }
+
+        // Kiểm tra xem ngành nghề có hợp lệ không
+        const existingMajor = await Major.findById(studentData.major);
+        if (!existingMajor) {
+            return res.status(400).json({
+                status: "invalid_major",
+                error: 'Chuyên ngành được cung cấp không hợp lệ'
+            });
+        }
+
         // const year = new Date().getFullYear().toString().slice(-2);
-        const year = studentData.customYear.slice(-2);
+        // const year = studentData.customYear.slice(-2);
+        // Assuming studentData.customYear is optional, provide a default value if it's not provided
+        const year = (studentData.customYear || new Date().getFullYear().toString()).slice(-2);
+
         // const count = 10;
         const count = await Student.countDocuments();
 
@@ -80,74 +103,17 @@ router.post('/signup', async (req, res) => {
         studentData.studentId = studentId;
         studentData.mssv = mssv;
         studentData.password = hashedPassword;
+        studentData.major = existingMajor._id;
         studentData.createdAt = currentTime;
         studentData.updatedAt = currentTime;
         const student = new Student(studentData);
 
         await student.save();
 
-        const emailHtml = `
-            <!DOCTYPE html>
-            <html>
-            <head>
-                <meta charset="UTF-8">
-                <title>Thông tin tài khoản</title>
-                <style>
-                    body {
-                        font-family: Arial, sans-serif;
-                        background-color: #f4f4f4;
-                    }
-                    .container {
-                        background-color: #ffffff;
-                        border-radius: 5px;
-                        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-                        margin: 20px auto;
-                        max-width: 500px;
-                        padding: 20px;
-                        text-align: center;
-                    }
-                    h1 {
-                        color: #ff00cc;
-                        font-size: 24px;
-                    }
-                    p {
-                        color: #555;
-                        font-size: 16px;
-                        margin-bottom: 20px;
-                    }
-                    .bold {
-                        font-weight: bold;
-                    }
-                    .copy-icon {
-                        font-size: 20px;
-                        color: #0073e6;
-                        cursor: pointer;
-                        margin-left: 5px;
-                    }
-                </style>
-            </head>
-            <body>
-                <div class="container">
-                    <h1>Xin chào, ${studentData.fullName}</h1>
-                    <p>Dưới đây là thông tin tài khoản của bạn để đăng nhập vào ứng dụng SHOOL MANAGER:</p>
-                    <p class="bold">Mã số sinh viên (MSSV): ${mssv} <span class="copy-icon" onclick="copyText('${mssv}')">&#x1F4CB</span></p>
-                    <p class="bold">Mật khẩu: ${password} <span class="copy-icon" onclick="copyText('${password}')">&#x1F4CB</span></p>
-                    <p>Vui lòng giữ thông tin này cẩn thận và thay đổi mật khẩu sau khi đăng nhập.</p>
-                </div>
-                <script>
-                    function copyText(text) {
-                        const tempInput = document.createElement('input');
-                        tempInput.value = text;
-                        document.body.appendChild(tempInput);
-                        tempInput.select();
-                        document.execCommand('copy');
-                        document.body.removeChild(tempInput);
-                        alert('Text copied: ' + text);
-                    }
-                </script>
-            </body>
-            </html>          
-        `;
+        const emailHtml = userFormatTemplate.userFormatTemplate
+            .replace('$fullName', studentData.fullName)
+            .replace('$mssv', mssv)
+            .replace('$password', password);
 
         const mailOptions = {
             from: process.env.AUTH_EMAIL,

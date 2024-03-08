@@ -62,6 +62,10 @@ const studentSchema = new Schema({
             ref: 'TuitionFee',
         }
     ],
+    major: {
+        type: Schema.Types.ObjectId,
+        ref: 'Major'
+    },
     isStudying: {
         type: Boolean,   // học sinh đang học 
         default: true,
