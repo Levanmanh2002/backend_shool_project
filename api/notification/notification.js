@@ -94,7 +94,7 @@ async function sendNotification(teacherId, message) {
 
         await notification.save();
 
-        const teacher = await Teacher.findById(teacherId);
+        const teacher = await Teacher.findById(teacherId).populate('grantedBy');
         console.log(`Đã gửi thông báo tới giáo viên ${teacher.fullName}: ${message}`);
     } catch (error) {
         console.error('Lỗi khi gửi thông báo:', error);
