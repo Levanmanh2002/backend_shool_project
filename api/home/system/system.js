@@ -13,7 +13,7 @@ router.post('/system', async (req, res) => {
     try {
         const teacherIdToUpdate = req.body.teacherId;
         const requestedPermission = req.body.requestedPermission;
-        const grantedByTeacherId = req.body.teacherId;
+        const grantedByTeacherId = req.body.grantedById;
 
         const teacherToUpdate = await Teacher.findOne({ _id: teacherIdToUpdate });
 
