@@ -44,6 +44,10 @@ const teacherSchema = new Schema({
         enum: [1, 2, 3, 4],
         default: 4, // Quyền mặc định nếu không được chỉ định
     },
+    grantedBy: {
+        type: Schema.Types.ObjectId,
+        ref: 'Teacher'
+    },
     createdAt: {
         type: Date,
         default: Date.now,

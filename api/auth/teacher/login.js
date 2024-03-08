@@ -11,7 +11,7 @@ router.post('/login', async (req, res) => {
     try {
         const { teacherCode, password } = req.body;
 
-        const teacher = await Teacher.findOne({ teacherCode });
+        const teacher = await Teacher.findOne({ teacherCode }).populate('grantedBy');
 
         if (!teacher) {
             return res.status(401).json({

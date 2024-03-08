@@ -13,6 +13,7 @@ router.post('/system', async (req, res) => {
     try {
         const teacherIdToUpdate = req.body.teacherId;
         const requestedPermission = req.body.requestedPermission;
+        const grantedByTeacherId = req.body.teacherId;
 
         const teacherToUpdate = await Teacher.findOne({ _id: teacherIdToUpdate });
 
@@ -24,6 +25,7 @@ router.post('/system', async (req, res) => {
         }
 
         teacherToUpdate.system = requestedPermission;
+        teacherToUpdate.grantedBy = grantedByTeacherId;
 
         const updatedTeacher = await teacherToUpdate.save();
 
