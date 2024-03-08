@@ -23,7 +23,7 @@ router.get('/profile', authenticateToken, async (req, res) => {
     try {
         const teacherCode = req.user.teacherCode;
 
-        const teacher = await Teacher.findOne({ teacherCode });
+        const teacher = await Teacher.findOne({ teacherCode }).populate('grantedBy');
 
         if (!teacher) {
             return res.status(404).json({ error: 'Không tìm thấy thông tin giáo viên.' });

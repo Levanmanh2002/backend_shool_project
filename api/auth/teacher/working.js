@@ -4,7 +4,7 @@ const Teacher = require('../../../models/teacher');
 
 router.get('/working-teachers', async (req, res) => {
     try {
-        const workingTeachers = await Teacher.find({ isWorking: true });
+        const workingTeachers = await Teacher.find({ isWorking: true }).populate('grantedBy');
         res.status(201).json({
             status: "SUCCESS",
             total: workingTeachers.length,
