@@ -24,7 +24,7 @@ router.get('/total_page', async (req, res) => {
 
         const totalTeachers = await Teacher.find({})
             .skip((page - 1) * limit)
-            .limit(limit);
+            .limit(limit).populate('grantedBy');
 
         res.status(201).json({
             status: "SUCCESS",

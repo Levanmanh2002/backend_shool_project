@@ -11,7 +11,7 @@ const job = schedule.scheduleJob('0 0 */3 * *', async () => {
     // console.log('Đã kích hoạt công việc kiểm tra thông tin và gửi thông báo.');
 
     try {
-        const teachers = await Teacher.find({ isWorking: true });
+        const teachers = await Teacher.find({ isWorking: true }).populate('grantedBy');
 
         teachers.forEach(async (teacher) => {
             if (!teacher.fullName) {
@@ -103,7 +103,7 @@ async function sendNotification(teacherId, message) {
 
 router.get('/send_notification', async (req, res) => {
     try {
-        const teachers = await Teacher.find({ isWorking: true });
+        const teachers = await Teacher.find({ isWorking: true }).populate('grantedBy');
         const notifications = [];
 
         teachers.forEach((teacher) => {
