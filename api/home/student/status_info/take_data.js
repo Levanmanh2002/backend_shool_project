@@ -6,7 +6,7 @@ const Student = require("../../../../models/student");
 // Route để lấy tất cả danh sách học sinh
 router.get('/all-students', async (req, res) => {
     try {
-        const allStudent = await Student.find();
+        const allStudent = await Student.find().populate('major');
 
         res.status(200).json({
             status: "SUCCESS",
@@ -22,7 +22,7 @@ router.get('/all-students', async (req, res) => {
 // Route để lấy danh sách học sinh đang học
 router.get('/active-students', async (req, res) => {
     try {
-        const activeStudents = await Student.find({ status: 1 });
+        const activeStudents = await Student.find({ status: 1 }).populate('major');
 
         res.status(200).json({
             status: "SUCCESS",
@@ -38,7 +38,7 @@ router.get('/active-students', async (req, res) => {
 // Route để lấy danh sách học sinh tự nghỉ học
 router.get('/self-suspended-students', async (req, res) => {
     try {
-        const selfSuspendedStudents = await Student.find({ status: 2 });
+        const selfSuspendedStudents = await Student.find({ status: 2 }).populate('major');
 
         res.status(200).json({
             status: "SUCCESS",
@@ -54,7 +54,7 @@ router.get('/self-suspended-students', async (req, res) => {
 // Route để lấy danh sách học sinh đang bị đình chỉ học
 router.get('/suspended-students', async (req, res) => {
     try {
-        const suspendedStudents = await Student.find({ status: 3 });
+        const suspendedStudents = await Student.find({ status: 3 }).populate('major');
 
         res.status(200).json({
             status: "SUCCESS",
@@ -71,7 +71,7 @@ router.get('/suspended-students', async (req, res) => {
 // Route để lấy danh sách học sinh bị đuổi học
 router.get('/expelled-students', async (req, res) => {
     try {
-        const expelledStudents = await Student.find({ status: 4 });
+        const expelledStudents = await Student.find({ status: 4 }).populate('major');
 
         res.status(200).json({
             status: "SUCCESS",
