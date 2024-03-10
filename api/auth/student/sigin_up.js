@@ -219,21 +219,6 @@ module.exports = router;
 //                 verificationCode: '',
 //                 resetTokenExpiration: null,
 //                 isStudying: true,
-//                 selfSuspension: {
-//                     isSelfSuspended: false,
-//                     suspensionEndDate: null,
-//                     suspensionReason: '',
-//                 },
-//                 suspension: {
-//                     isSuspended: false,
-//                     suspensionEndDate: null,
-//                     suspensionReason: '',
-//                 },
-//                 expulsion: {
-//                     isExpelled: false,
-//                     expulsionDate: null,
-//                     expulsionReason: '',
-//                 },
 //             };
 
 //             const student = new Student(studentData);
