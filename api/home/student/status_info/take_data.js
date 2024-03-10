@@ -75,7 +75,7 @@ router.get('/expelled-students', async (req, res) => {
 
         res.status(200).json({
             status: "SUCCESS",
-            toatk: expelledStudents.length,
+            total: expelledStudents.length,
             data: expelledStudents,
         });
     } catch (err) {
