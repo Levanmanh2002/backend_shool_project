@@ -147,7 +147,7 @@ module.exports = router;
 // http://localhost:3000/admin/auto-generate-students
 // router.post('/auto-generate-students', async (req, res) => {
 //     try {
-//         const totalStudents = 1000;
+//         const totalStudents = 2;
 
 //         for (let i = 0; i < totalStudents; i++) {
 //             const year = new Date().getFullYear().toString().slice(-2);
@@ -187,38 +187,22 @@ module.exports = router;
 //                 fullName: faker.name.findName(),
 //                 birthDate: new Date(),
 //                 cccd: faker.random.number({ min: 100000000, max: 999999999 }).toString(),
-//                 birthPlace: faker.address.city(),
 //                 customYear: year,
 //                 mssv: mssv,
 //                 password: hashedPassword,
 //                 gender: faker.random.arrayElement(['Male', 'Female']),
-//                 hometown: faker.address.city(),
-//                 permanentAddress: faker.address.streetAddress(),
-//                 occupation: faker.name.jobTitle(),
-//                 students: [],
 //                 contactPhone: faker.phone.phoneNumber(),
 //                 contactAddress: faker.address.streetAddress(),
-//                 educationLevel: faker.random.word(),
-//                 graduationCertificate: [faker.random.word()],
-//                 academicPerformance: faker.random.word(),
-//                 conduct: faker.random.word(),
-//                 classRanking10: faker.random.word(),
-//                 classRanking11: faker.random.word(),
-//                 classRanking12: faker.random.word(),
-//                 graduationYear: faker.datatype.number({ min: 2022, max: 2023 }).toString(),
 //                 ethnicity: faker.random.word(),
-//                 religion: faker.random.word(),
 //                 beneficiary: faker.random.word(),
-//                 area: faker.random.word(),
-//                 idCardIssuedDate: faker.date.past(),
-//                 idCardIssuedPlace: faker.address.city(),
 //                 fatherFullName: faker.name.findName(),
 //                 motherFullName: faker.name.findName(),
 //                 notes: faker.random.words(),
-//                 avatarUrl: faker.image.avatar(),
-//                 verificationCode: '',
-//                 resetTokenExpiration: null,
-//                 isStudying: true,
+//                 status: 4,
+//                 statusInfo: {
+//                     condition: "Bị đuổi học",
+//                     reason: 'Lý do bị đuổi học',
+//                 },
 //             };
 
 //             const student = new Student(studentData);
