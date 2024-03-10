@@ -111,7 +111,11 @@ router.get('/active-students', async (req, res) => {
     try {
         const activeStudents = await Student.find({ status: 1 });
 
-        res.status(200).json(activeStudents);
+        res.status(200).json({
+            status: "SUCCESS",
+            total: activeStudents.length,
+            data: activeStudents,
+        });
     } catch (err) {
         console.error("Lỗi khi lấy danh sách học sinh đang học:", err);
         res.status(500).json({ message: "Có lỗi xảy ra, vui lòng thử lại sau" });
@@ -123,7 +127,11 @@ router.get('/self-suspended-students', async (req, res) => {
     try {
         const selfSuspendedStudents = await Student.find({ status: 2 });
 
-        res.status(200).json(selfSuspendedStudents);
+        res.status(200).json({
+            status: "SUCCESS",
+            total: selfSuspendedStudents.length,
+            data: selfSuspendedStudents,
+        });
     } catch (err) {
         console.error("Lỗi khi lấy danh sách học sinh tự nghỉ học:", err);
         res.status(500).json({ message: "Có lỗi xảy ra, vui lòng thử lại sau" });
@@ -135,7 +143,11 @@ router.get('/suspended-students', async (req, res) => {
     try {
         const suspendedStudents = await Student.find({ status: 3 });
 
-        res.status(200).json(suspendedStudents);
+        res.status(200).json({
+            status: "SUCCESS",
+            total: suspendedStudents.length,
+            data: suspendedStudents,
+        });
     } catch (err) {
         console.error("Lỗi khi lấy danh sách học sinh đang bị đình chỉ học:", err);
         res.status(500).json({ message: "Có lỗi xảy ra, vui lòng thử lại sau" });
@@ -148,7 +160,11 @@ router.get('/expelled-students', async (req, res) => {
     try {
         const expelledStudents = await Student.find({ status: 4 });
 
-        res.status(200).json(expelledStudents);
+        res.status(200).json({
+            status: "SUCCESS",
+            toatk: expelledStudents.length,
+            data: expelledStudents,
+        });
     } catch (err) {
         console.error("Lỗi khi lấy danh sách học sinh bị đuổi học:", err);
         res.status(500).json({ message: "Có lỗi xảy ra, vui lòng thử lại sau" });
