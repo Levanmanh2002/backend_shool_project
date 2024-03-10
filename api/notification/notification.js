@@ -11,7 +11,7 @@ const job = schedule.scheduleJob('0 0 */3 * *', async () => {
     // console.log('Đã kích hoạt công việc kiểm tra thông tin và gửi thông báo.');
 
     try {
-        const teachers = await Teacher.find({ isWorking: true }).populate('grantedBy');
+        const teachers = await Teacher.find({ isWorking: true });
 
         teachers.forEach(async (teacher) => {
             if (!teacher.fullName) {
@@ -94,7 +94,7 @@ async function sendNotification(teacherId, message) {
 
         await notification.save();
 
-        const teacher = await Teacher.findById(teacherId).populate('grantedBy');
+        const teacher = await Teacher.findById(teacherId);
         console.log(`Đã gửi thông báo tới giáo viên ${teacher.fullName}: ${message}`);
     } catch (error) {
         console.error('Lỗi khi gửi thông báo:', error);
@@ -103,7 +103,7 @@ async function sendNotification(teacherId, message) {
 
 router.get('/send_notification', async (req, res) => {
     try {
-        const teachers = await Teacher.find({ isWorking: true }).populate('grantedBy');
+        const teachers = await Teacher.find({ isWorking: true });
         const notifications = [];
 
         teachers.forEach((teacher) => {
