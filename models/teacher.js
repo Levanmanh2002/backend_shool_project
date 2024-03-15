@@ -20,7 +20,6 @@ const teacherSchema = new Schema({
     department: String,
     role: String,
     joinDate: Date,
-    civilServant: Boolean,
     contractType: String,
     primarySubject: String,
     secondarySubject: String,
