@@ -143,6 +143,58 @@ router.put('/update_tuition_fee/:feesIds', async (req, res) => {
 });
 
 
+router.post('/add_tuition_fee_to_student/:studentId', async (req, res) => {
+    const studentId = req.params.studentId;
+
+    try {
+        // Kiểm tra xem học sinh có tồn tại không
+        const student = await Student.findById(studentId);
+        if (!student) {
+            return res.status(404).json({ error: 'Không tìm thấy học sinh.' });
+        }
+
+        let maTraCuu;
+        let isUnique = false;
+
+        // Tạo mã tra cứu mới cho học phí đến khi nào không trùng lặp
+        do {
+            maTraCuu = generateRandomCode(6);
+            const existingTuitionFee = await TuitionFee.findOne({ maTraCuu });
+            if (!existingTuitionFee) {
+                isUnique = true;
+            }
+        } while (!isUnique);
+
+        // Tạo học phí mới
+        const newTuitionFee = new TuitionFee({
+            maTraCuu: maTraCuu,
+            tenHocPhi: req.body.tenHocPhi,
+            noiDungHocPhi: req.body.noiDungHocPhi,
+            soTienPhatHanh: req.body.soTienPhatHanh,
+            soTienDong: req.body.soTienDong,
+            soTienNo: req.body.soTienNo,
+            hanDongTien: req.body.hanDongTien,
+        });
+
+        // Lưu học phí mới vào cơ sở dữ liệu
+        await newTuitionFee.save();
+
+        // Cập nhật danh sách học phí cần thanh toán của học sinh
+        student.feesToPay.push(newTuitionFee._id);
+        await student.save();
+
+        res.status(201).json({
+            status: 'SUCCESS',
+            message: 'Đã thêm học phí cho học sinh thành công.',
+            data: newTuitionFee,
+        });
+    } catch (error) {
+        console.error('Đã xảy ra lỗi:', error);
+        res.status(500).json({ error: 'Đã xảy ra lỗi khi thêm học phí cho học sinh.' });
+    }
+});
+
+
 // router.get('/search_fees', async (req, res) => {
 //     const maTraCuu = req.query.maTraCuu;
 
