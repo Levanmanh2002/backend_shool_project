@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const { v4: uuidv4 } = require('uuid');
 
 const TuitionFee = require("../../../models/tuition_fee");
 const Student = require("../../../models/student");
@@ -16,6 +17,7 @@ function generateRandomCode(length) {
 
 router.post('/create_tuition_fee', async (req, res) => {
     try {
+        const uuid = uuidv4();
 
         let maTraCuu = '';
 
@@ -29,24 +31,18 @@ router.post('/create_tuition_fee', async (req, res) => {
         } while (true);
 
         req.body.maTraCuu = maTraCuu;
+        req.body.feesIds = uuid;
 
-        // Tạo học phí mới
-        const newTuitionFee = await TuitionFee.create(req.body);
-
-        // Lấy ID của học phí mới
-        const newTuitionFeeId = newTuitionFee._id;
-
-        // Lấy danh sách tất cả học sinh
+        // Tạo học phí mới cho mỗi sinh viên
         const allStudents = await Student.find({});
-
-        // Cập nhật mảng feesToPay của từng học sinh
-        const promises = allStudents.map(async student => {
-            student.feesToPay.push(newTuitionFeeId);
+        for (const student of allStudents) {
+            const newTuitionFee = await TuitionFee.create({
+                ...req.body,
+                studentIds: student._id
+            });
+            student.feesToPay.push(newTuitionFee._id);
             await student.save();
-        });
-
-        // Chờ cho tất cả các promise hoàn thành
-        await Promise.all(promises);
+        }
 
         res.status(201).json({
             status: 'SUCCESS',
@@ -60,14 +56,26 @@ router.post('/create_tuition_fee', async (req, res) => {
 
 router.get('/tuition_fees', async (req, res) => {
     try {
-        // Lấy tất cả dữ liệu học phí từ cơ sở dữ liệu
-        const allTuitionFees = await TuitionFee.find({});
+        // Lấy các giá trị maTraCuu duy nhất
+        const uniqueMaTraCuu = await TuitionFee.distinct('maTraCuu');
 
-        // Trả về dữ liệu học phí
+        // Khởi tạo mảng để lưu trữ học phí duy nhất cho mỗi maTraCuu
+        const uniqueTuitionFees = [];
+
+        // Lặp qua từng giá trị maTraCuu
+        for (const maTraCuu of uniqueMaTraCuu) {
+            // Lấy học phí đầu tiên cho mỗi maTraCuu
+            const tuitionFee = await TuitionFee.findOne({ maTraCuu });
+
+            // Thêm học phí vào mảng kết quả
+            uniqueTuitionFees.push(tuitionFee);
+        }
+
+        // Trả về dữ liệu học phí duy nhất cho mỗi maTraCuu
         res.status(201).json({
             status: 'SUCCESS',
-            message: 'Đã lấy tất cả dữ liệu học phí thành công.',
-            data: allTuitionFees,
+            message: 'Đã lấy dữ liệu học phí duy nhất cho mỗi maTraCuu thành công.',
+            data: uniqueTuitionFees,
         });
     } catch (error) {
         console.error('Đã xảy ra lỗi:', error);
@@ -79,51 +87,44 @@ router.delete('/delete_tuition_fee/:tuitionFeeId', async (req, res) => {
     const tuitionFeeId = req.params.tuitionFeeId;
 
     try {
-        // Xóa học phí
-        const deletedTuitionFee = await TuitionFee.findByIdAndDelete(tuitionFeeId);
+        // Kiểm tra xem có học phí nào có feesIds là tuitionFeeId hay không
+        const existingTuitionFee = await TuitionFee.findOne({ feesIds: tuitionFeeId });
 
-        if (!deletedTuitionFee) {
-            return res.status(404).json({ error: 'Không tìm thấy học phí.' });
+        if (!existingTuitionFee) {
+            return res.status(404).json({ error: 'Không tìm thấy học phí để xóa.' });
         }
 
-        // Cập nhật lại mảng feesToPay của tất cả sinh viên
-        const studentsToUpdate = await Student.find({ feesToPay: tuitionFeeId });
-
-        const promises = studentsToUpdate.map(async student => {
-            student.feesToPay.pull(tuitionFeeId); // Loại bỏ id của học phí đã xóa khỏi mảng
-            await student.save();
-        });
-
-        await Promise.all(promises);
+        // Xóa tất cả các học phí có feesIds là tuitionFeeId
+        await TuitionFee.deleteMany({ feesIds: tuitionFeeId });
 
         res.status(201).json({
             status: 'SUCCESS',
-            message: 'Đã xóa học phí và cập nhật dữ liệu sinh viên thành công.',
+            message: 'Đã xóa học phí thành công.',
         });
     } catch (error) {
         console.error('Đã xảy ra lỗi:', error);
-        res.status(500).json({ error: 'Đã xảy ra lỗi khi xóa học phí và cập nhật dữ liệu sinh viên.' });
+        res.status(500).json({ error: 'Đã xảy ra lỗi khi xóa học phí.' });
     }
 });
 
-router.put('/update_tuition_fee/:tuitionFeeId', async (req, res) => {
-    const tuitionFeeId = req.params.tuitionFeeId;
+router.put('/update_tuition_fee/:feesIds', async (req, res) => {
+    const feesIds = req.params.feesIds;
 
     try {
         // Chỉnh sửa học phí
-        const updatedTuitionFee = await TuitionFee.findByIdAndUpdate(tuitionFeeId, { new: true });
+        const updatedTuitionFee = await TuitionFee.updateMany({ feesIds }, req.body);
 
-        if (!updatedTuitionFee) {
+        if (updatedTuitionFee.n === 0) {
             return res.status(404).json({ error: 'Không tìm thấy học phí.' });
         }
 
-        // Cập nhật lại mảng feesToPay của tất cả sinh viên
-        const studentsToUpdate = await Student.find({ feesToPay: tuitionFeeId });
+        // Cập nhật lại thông tin học phí trên tất cả sinh viên
+        const studentsToUpdate = await Student.find({ 'feesToPay.feesIds': feesIds });
 
         const promises = studentsToUpdate.map(async student => {
-            const index = student.feesToPay.indexOf(tuitionFeeId);
-            if (index !== -1) {
-                student.feesToPay[index] = updatedTuitionFee._id;
+            const feesIndex = student.feesToPay.findIndex(fee => fee.feesIds === feesIds);
+            if (feesIndex !== -1) {
+                student.feesToPay[feesIndex] = req.body; // Cập nhật dữ liệu mới
                 await student.save();
             }
         });
@@ -141,18 +142,19 @@ router.put('/update_tuition_fee/:tuitionFeeId', async (req, res) => {
     }
 });
 
-router.get('/search_fees', async (req, res) => {
-    const maTraCuu = req.query.maTraCuu;
 
-    try {
-        const result = await TuitionFee.find({ maTraCuu: { $regex: maTraCuu, $options: 'i' } });
+// router.get('/search_fees', async (req, res) => {
+//     const maTraCuu = req.query.maTraCuu;
 
-        res.status(201).json(result);
+//     try {
+//         const result = await TuitionFee.find({ maTraCuu: { $regex: maTraCuu, $options: 'i' } });
 
-    } catch (error) {
-        console.error('Error searching by maTraCuu:', error);
-        res.status(500).json({ error: 'Internal server error' });
-    }
-});
+//         res.status(201).json(result);
+
+//     } catch (error) {
+//         console.error('Error searching by maTraCuu:', error);
+//         res.status(500).json({ error: 'Internal server error' });
+//     }
+// });
 
 module.exports = router;

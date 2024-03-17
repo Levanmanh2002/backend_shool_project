@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const tuitionFeeSchema = new Schema({
+    feesIds: String,
     maTraCuu: {
         type: String,
         required: true,
@@ -36,6 +37,10 @@ const tuitionFeeSchema = new Schema({
     status: {
         type: Boolean,
         default: false,
+    },
+    studentIds: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Student',
     },
     createdAt: {
         type: Date,
