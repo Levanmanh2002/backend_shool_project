@@ -143,6 +143,7 @@ router.put('/update_tuition_fee/:feesIds', async (req, res) => {
 });
 
 
+
 router.post('/add_tuition_fee_to_student/:studentId', async (req, res) => {
     const studentId = req.params.studentId;
 
@@ -193,6 +194,80 @@ router.post('/add_tuition_fee_to_student/:studentId', async (req, res) => {
         res.status(500).json({ error: 'Đã xảy ra lỗi khi thêm học phí cho học sinh.' });
     }
 });
+
+router.put('/update_tuition_fee_to_student/:studentId/:tuitionFeeId', async (req, res) => {
+    const studentId = req.params.studentId;
+    const tuitionFeeId = req.params.tuitionFeeId;
+
+    try {
+        // Kiểm tra xem học sinh và học phí có tồn tại không
+        const student = await Student.findById(studentId);
+        const tuitionFee = await TuitionFee.findById(tuitionFeeId);
+
+        if (!student || !tuitionFee) {
+            return res.status(404).json({ error: 'Không tìm thấy học sinh hoặc học phí.' });
+        }
+
+        // Nhận dữ liệu cập nhật từ yêu cầu
+        const updatedData = {
+            tenHocPhi: req.body.tenHocPhi,
+            noiDungHocPhi: req.body.noiDungHocPhi,
+            soTienPhatHanh: req.body.soTienPhatHanh,
+            soTienDong: req.body.soTienDong,
+            soTienNo: req.body.soTienNo,
+            hanDongTien: req.body.hanDongTien,
+        };
+
+        // Cập nhật thông tin học phí
+        Object.assign(tuitionFee, updatedData);
+
+        // Lưu thay đổi vào cơ sở dữ liệu
+        await tuitionFee.save();
+
+        res.status(200).json({
+            status: 'SUCCESS',
+            message: 'Đã cập nhật học phí cho học sinh thành công.',
+            data: tuitionFee,
+        });
+    } catch (error) {
+        console.error('Đã xảy ra lỗi:', error);
+        res.status(500).json({ error: 'Đã xảy ra lỗi khi cập nhật học phí cho học sinh.' });
+    }
+});
+
+router.delete('/delete_tuition_fee_from_student/:studentId/:tuitionFeeId', async (req, res) => {
+    const { studentId, tuitionFeeId } = req.params;
+
+    try {
+        // Kiểm tra xem học sinh có tồn tại không
+        const student = await Student.findById(studentId);
+        if (!student) {
+            return res.status(404).json({ error: 'Không tìm thấy học sinh.' });
+        }
+
+        // Kiểm tra xem học phí có tồn tại không
+        const tuitionFee = await TuitionFee.findById(tuitionFeeId);
+        if (!tuitionFee) {
+            return res.status(404).json({ error: 'Không tìm thấy học phí.' });
+        }
+
+        // Loại bỏ học phí khỏi danh sách học phí cần thanh toán của học sinh
+        const index = student.feesToPay.indexOf(tuitionFeeId);
+        if (index !== -1) {
+            student.feesToPay.splice(index, 1);
+            await student.save();
+        }
+
+        res.status(200).json({
+            status: 'SUCCESS',
+            message: 'Đã xóa học phí của học sinh thành công.',
+        });
+    } catch (error) {
+        console.error('Đã xảy ra lỗi:', error);
+        res.status(500).json({ error: 'Đã xảy ra lỗi khi xóa học phí của học sinh.' });
+    }
+});
+
 
 
 // router.get('/search_fees', async (req, res) => {
