@@ -48,7 +48,7 @@ const feeRouter = require('./api/home/fee/fee')
 const totalAllRouter = require('./api/routes/total')
 const searchRouter = require('./api/home/search/search')
 const tuitionFeeRouter = require('./api/home/tuition_fee/tuition_fee')
-const studentFeeRouter = require('./api/home/tuition_fee/student_fee')
+const paymentRouter = require('./api/home/tuition_fee/payment')
 const otherRouter = require('./api/home/other/other')
 const themeRoter = require('./api/home/theme/theme')
 const statusInfoRouter = require('./api/home/student/status_info/status_info')
@@ -102,7 +102,7 @@ app.use('/admin', feeRouter);
 app.use('/routes', totalAllRouter);
 app.use('/search', searchRouter);
 app.use('/admin', tuitionFeeRouter);
-app.use('/admin', studentFeeRouter);
+app.use('/admin', paymentRouter);
 app.use('/other', otherRouter);
 app.use('/theme', themeRoter);
 app.use('/status', statusInfoRouter);
