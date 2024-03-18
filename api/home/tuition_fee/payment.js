@@ -66,7 +66,7 @@ router.get('/payment_history/:studentId', async (req, res) => {
 
     try {
         // Tìm tất cả lịch sử thanh toán của học sinh dựa trên studentId
-        const paymentHistory = await PaymentHistory.find({ studentId: studentId });
+        const paymentHistory = await PaymentHistory.find({ studentId: studentId }).populate('studentId').populate('tuitionFeeId');
 
         if (!paymentHistory || paymentHistory.length === 0) {
             return res.status(404).json({ error: 'Không tìm thấy lịch sử thanh toán cho học sinh này.' });
