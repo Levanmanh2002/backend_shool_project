@@ -277,6 +277,47 @@ router.delete('/notifications/:notificationId', async (req, res) => {
     }
 });
 
+router.put('/notifications/mark-as-read/:id', async (req, res) => {
+    try {
+        const notificationId = req.params.id;
+
+        // Tìm thông báo theo ID
+        const notification = await Notification.findById(notificationId);
+
+        // Kiểm tra xem thông báo có tồn tại không
+        if (!notification) {
+            return res.status(404).json({ status: 'ERROR', error: 'Không tìm thấy thông báo.' });
+        }
+
+        // Đánh dấu thông báo đã đọc
+        notification.isRead = true;
+        await notification.save();
+
+        res.status(200).json({ status: 'SUCCESS', message: 'Đã đánh dấu thông báo đã đọc.' });
+    } catch (error) {
+        console.error('Lỗi khi đánh dấu thông báo đã đọc:', error);
+        res.status(500).json({ status: 'ERROR', error: 'Đã xảy ra lỗi khi đánh dấu thông báo đã đọc.' });
+    }
+});
+
+router.put('/notifications/mark-all-as-read', async (req, res) => {
+    try {
+        // Tìm tất cả các thông báo chưa đọc
+        const unreadNotifications = await Notification.find({ isRead: false });
+
+        // Lặp qua từng thông báo chưa đọc và cập nhật trường isRead thành true
+        for (const notification of unreadNotifications) {
+            notification.isRead = true;
+            await notification.save(); // Lưu thay đổi vào cơ sở dữ liệu
+        }
+
+        res.status(200).json({ status: 'SUCCESS', message: 'Đã đánh dấu tất cả các thông báo đã đọc.' });
+    } catch (error) {
+        console.error('Lỗi khi đánh dấu tất cả các thông báo đã đọc:', error);
+        res.status(500).json({ status: 'ERROR', error: 'Đã xảy ra lỗi khi đánh dấu tất cả các thông báo đã đọc.' });
+    }
+});
+
 // router.delete('/notifications', async (req, res) => {
 //     try {
 //         const idToKeep1 = '65f983b306aa7c3ea696f5ba'; // ID bạn muốn giữ lại
@@ -295,7 +336,6 @@ router.delete('/notifications/:notificationId', async (req, res) => {
 //         res.status(500).json({ error: 'Đã xảy ra lỗi khi xóa thông báo.' });
 //     }
 // });
-
 
 
 module.exports = router;

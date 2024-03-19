@@ -26,11 +26,11 @@ const notificationSchema = new mongoose.Schema({
     majorIds: {
         type: String,
         required: false // Không bắt buộc
-    },  
+    },
     uniformIds: {
         type: String,
         required: false // Không bắt buộc
-    }, 
+    },
     classIds: {
         type: String,
         required: false // Không bắt buộc
@@ -38,6 +38,10 @@ const notificationSchema = new mongoose.Schema({
     systemIds: {
         type: String,
         required: false // Không bắt buộc
+    },
+    isRead: {
+        type: Boolean,
+        default: false  // Mặc định là false
     },
     createdAt: {
         type: Date,
