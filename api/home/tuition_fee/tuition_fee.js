@@ -4,6 +4,7 @@ const { v4: uuidv4 } = require('uuid');
 
 const TuitionFee = require("../../../models/tuition_fee");
 const Student = require("../../../models/student");
+const Notification = require("../../../models/notification");
 
 function generateRandomCode(length) {
     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
@@ -43,6 +44,16 @@ router.post('/create_tuition_fee', async (req, res) => {
             student.feesToPay.push(newTuitionFee._id);
             await student.save();
         }
+
+        // Tạo thông báo cho học phí mới
+        const notificationMessage = `Học phí mới ${maTraCuu} đã được tạo và cập nhật.`;
+        const newNotification = new Notification({
+            title: 'Tạo học phí mới',
+            message: notificationMessage,
+            feesIds: 'feesId',
+            createdAt: new Date()
+        });
+        await newNotification.save();
 
         res.status(201).json({
             status: 'SUCCESS',

@@ -5,6 +5,7 @@ const { v4: uuidv4 } = require('uuid');
 const Class = require("../../../../models/class")
 const Teacher = require("../../../../models/teacher")
 const Student = require("../../../../models/student")
+const Notification = require("../../../../models/notification")
 
 router.post('/add-students-to-class', async (req, res) => {
     try {
@@ -127,6 +128,16 @@ router.post('/create-list-student-and-teacher-class', async (req, res) => {
 
         // Lưu lớp học vào cơ sở dữ liệu
         await newClass.save();
+
+        // Tạo thông báo cho lớp học mới
+        const notificationMessage = `Lớp học mới ${className} đã được tạo.`;
+        const newNotification = new Notification({
+            title: 'Tạo lớp học mới',
+            message: notificationMessage,
+            classIds: 'classId',
+            createdAt: new Date()
+        });
+        await newNotification.save();
 
         res.status(201).json({
             message: 'Lớp học mới đã được tạo',

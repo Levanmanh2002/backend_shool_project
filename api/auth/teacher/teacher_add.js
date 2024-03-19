@@ -2,7 +2,9 @@ const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcrypt');
 const { v4: uuidv4 } = require('uuid');
+
 const Teacher = require('../../../models/teacher');
+const Notification = require('../../../models/notification');
 
 router.post('/add', async (req, res) => {
   try {
@@ -55,11 +57,20 @@ router.post('/add', async (req, res) => {
     teacherData.password = hashedPassword;
 
     const currentTime = new Date();
-    teacherData.createdAt = currentTime; 
+    teacherData.createdAt = currentTime;
     teacherData.updatedAt = currentTime;
 
     const newTeacher = new Teacher(teacherData);
     await newTeacher.save();
+
+    const notificationMessage = `Giáo viên mới ${teacherData.fullName} đã được thêm thành công vào hệ thống.`;
+    const newNotification = new Notification({
+      title: 'Thêm giáo viên mới',
+      message: notificationMessage,
+      teacherId: newTeacher._id,
+      createdAt: new Date()
+    });
+    await newNotification.save();
 
     res.status(201).json({
       status: "SUCCESS",

@@ -8,6 +8,7 @@ const userFormatTemplate = require('../html/user_format');
 
 const Student = require("../../../models/student");
 const Major = require("../../../models/major");
+const Notification = require("../../../models/notification");
 
 let transporter = nodemailer.createTransport({
     service: "gmail",
@@ -128,6 +129,14 @@ router.post('/signup', async (req, res) => {
                 console.log(error);
                 res.status(500).json({ error: 'Error sending email' });
             } else {
+                const successNotification = new Notification({
+                    title: 'Thêm học sinh mới',
+                    message: `Học sinh mới ${studentData.fullName} đã được thêm thành công vào hệ thống`,
+                    studentId: student._id,
+                    createdAt: new Date()
+                });
+                successNotification.save();
+
                 res.status(201).json({
                     status: "SUCCESS",
                     message: "Check your email for the account information",

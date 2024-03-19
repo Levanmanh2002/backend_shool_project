@@ -1,18 +1,50 @@
 const mongoose = require('mongoose');
-const Schema = mongoose.Schema;
 
-const notificationSchema = new Schema({
+const notificationSchema = new mongoose.Schema({
+    title: {
+        type: String,
+        required: true
+    },
+    message: {
+        type: String,
+        required: true
+    },
+    studentId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Student',
+        required: false // Không bắt buộc
+    },
     teacherId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Teacher',
+        required: false // Không bắt buộc
     },
-    message: String,
+    feesIds: {
+        type: String,
+        required: false // Không bắt buộc
+    },
+    majorIds: {
+        type: String,
+        required: false // Không bắt buộc
+    },  
+    uniformIds: {
+        type: String,
+        required: false // Không bắt buộc
+    }, 
+    classIds: {
+        type: String,
+        required: false // Không bắt buộc
+    },
+    systemIds: {
+        type: String,
+        required: false // Không bắt buộc
+    },
     createdAt: {
         type: Date,
-        default: Date.now,
-    },
+        default: Date.now
+    }
 });
 
-const NotificationModel = mongoose.model('Notification', notificationSchema);
+const Notification = mongoose.model('Notification', notificationSchema);
 
-module.exports = NotificationModel;
+module.exports = Notification;

@@ -3,6 +3,7 @@ const router = express.Router();
 
 const Major = require('../../../../models/major');
 const Student = require('../../../../models/student');
+const Notification = require('../../../../models/notification');
 
 router.post('/add-major', async (req, res) => {
     try {
@@ -23,6 +24,16 @@ router.post('/add-major', async (req, res) => {
         });
 
         await newMajor.save();
+
+        const notificationMessage = `Ngành nghề mới ${name} đã được thêm vào hệ thống.`;
+        const newNotification = new Notification({
+            title: 'Thông báo ngành nghề mới',
+            message: notificationMessage,
+            majorIds: "majorId",
+            createdAt: new Date()
+        });
+        await newNotification.save();
+
 
         res.status(201).json({
             status: "SUCCESS",

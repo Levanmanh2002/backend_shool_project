@@ -7,6 +7,7 @@ const serviceAccount = require('../../../json/school-manager-793a1-firebase-admi
 const fs = require('fs');
 
 const Other = require('../../../models/other');
+const Notification = require('../../../models/notification');
 
 if (!admin.apps.length) {
     admin.initializeApp({
@@ -55,6 +56,15 @@ router.post('/add-uniform', upload.single('file'), async (req, res) => {
         });
 
         const savedUniform = await newUniform.save();
+
+        const notificationMessage = `Khoản thu mới ${name} đã được thêm vào hệ thống.`;
+        const newNotification = new Notification({
+            title: 'Thêm khoản thu mới',
+            message: notificationMessage,
+            uniformIds: 'uniformId',
+            createdAt: new Date()
+        });
+        await newNotification.save();
 
         res.status(201).json(savedUniform);
     } catch (error) {

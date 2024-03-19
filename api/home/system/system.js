@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 
 const Teacher = require('../../../models/teacher');
+const Notification = require('../../../models/notification');
 
 /// Quyển Truy Cập Toàn Bộ Hệ Thống (có thể làm mọi thứ chính cấp quyền hay hủy quyền admin đó)
 /// Quyền Tạo Mới và Quản Lý Tài Khoản Người Dùng: Admin có thể tạo mới tài khoản người dùng, cũng như quản lý các quyền hạn và vai trò của họ
@@ -28,6 +29,16 @@ router.post('/system', async (req, res) => {
         teacherToUpdate.grantedBy = grantedByTeacherId;
 
         const updatedTeacher = await teacherToUpdate.save();
+
+        const notificationMessage = `Quyền hệ thống đã được cấp cho giáo viên.`;
+        const newNotification = new Notification({
+            title: 'Thông báo cấp quyền hệ thống',
+            message: notificationMessage,
+            systemIds: 'systemId',
+            createdAt: new Date()
+        });
+        await newNotification.save();
+
 
         res.status(201).json({
             status: "SUCCESS",
