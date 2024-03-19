@@ -11,7 +11,7 @@ router.get('/class-info', async (req, res) => {
         const classInfo = [];
 
         for (const cls of classes) {
-            const students = await Student.find({ _id: { $in: cls.students } });
+            const students = await Student.find({ _id: { $in: cls.students } }).populate('feesToPay').populate('major');
             const teacher = await Teacher.find({ _id: { $in: cls.teacher } }).populate('grantedBy');
             // const job = await Class.find({ _id: { $in: cls.classes } });
             const job = cls.job;
