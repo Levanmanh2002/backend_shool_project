@@ -318,6 +318,16 @@ router.put('/notifications/mark-all-as-read', async (req, res) => {
     }
 });
 
+router.get('/unread-count', async (req, res) => {
+    try {
+        const count = await Notification.countDocuments({ isRead: false });
+        res.status(201).json({ unreadCount: count });
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
 // router.delete('/notifications', async (req, res) => {
 //     try {
 //         const idToKeep1 = '65f983b306aa7c3ea696f5ba'; // ID bạn muốn giữ lại
